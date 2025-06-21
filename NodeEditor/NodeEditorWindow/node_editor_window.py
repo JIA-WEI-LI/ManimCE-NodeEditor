@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QGraphicsView, QWidget, QVBoxLayout, QGraphicsItem, 
 from PyQt5.QtGui import QBrush, QPen, QColor, QFont
 from PyQt5.QtCore import Qt
 
-from NodeEditorWindow.node_graphics_scene import QDMGraphicsScene
+from NodeEditorWindow.node_scene import Scene
 from NodeEditorWindow.node_graphics_view import QDMGraphicsView
 
 class NodeEditorWindow(QWidget):
@@ -19,7 +19,8 @@ class NodeEditorWindow(QWidget):
         self.setLayout(self.layout)
 
         # Create graphics scene
-        self.graphicsScene = QDMGraphicsScene()
+        self.scene = Scene()
+        self.graphicsScene = self.scene.graphicsScene
 
         # Create graphics view
         self.view = QDMGraphicsView(self.graphicsScene)
