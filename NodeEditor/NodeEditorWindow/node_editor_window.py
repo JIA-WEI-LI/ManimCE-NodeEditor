@@ -3,6 +3,7 @@ from PyQt5.QtGui import QBrush, QPen, QColor, QFont
 from PyQt5.QtCore import Qt
 
 from NodeEditorWindow.node_graphics_scene import QDMGraphicsScene
+from NodeEditorWindow.node_graphics_view import QDMGraphicsView
 
 class NodeEditorWindow(QWidget):
     def __init__(self, parent = None):
@@ -21,7 +22,7 @@ class NodeEditorWindow(QWidget):
         self.graphicsScene = QDMGraphicsScene()
 
         # Create graphics view
-        self.view = QGraphicsView(self)
+        self.view = QDMGraphicsView(self.graphicsScene)
         self.view.setScene(self.graphicsScene)
         self.layout.addWidget(self.view)
 
