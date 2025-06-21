@@ -1,6 +1,5 @@
-from PyQt5.QtWidgets import QGraphicsView, QWidget, QVBoxLayout, QGraphicsItem, QPushButton, QTextEdit, QApplication
-from PyQt5.QtGui import QBrush, QPen, QColor, QFont
-from PyQt5.QtCore import Qt, QFile
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QApplication
+from PyQt5.QtCore import QFile
 
 from NodeEditorWindow.core.scene import Scene
 from NodeEditorWindow.core.node import Node
