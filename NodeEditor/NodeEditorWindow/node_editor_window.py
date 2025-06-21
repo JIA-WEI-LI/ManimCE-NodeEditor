@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QWidget, QVBoxLayout
 
-from NodeEditorWindow.nodeGraphics_Scene import QDMGraphicsScene
+from NodeEditorWindow.node_graphics_scene import QDMGraphicsScene
 
 class NodeEditorWindow(QWidget):
     def __init__(self, parent = None):

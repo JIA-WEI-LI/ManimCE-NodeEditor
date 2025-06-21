@@ -2,7 +2,7 @@ import os
 import sys
 from PyQt5.QtWidgets import QApplication
 
-from NodeEditorWindow.nodeEditor_Window import NodeEditorWindow
+from NodeEditorWindow.node_editor_window import NodeEditorWindow
 
 def main():
     app = QApplication(sys.argv + ['-platform', 'windows:darkmode=1'])
