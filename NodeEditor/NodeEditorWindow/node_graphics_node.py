@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QGraphicsItem, QGraphicsTextItem
+from PyQt5.QtWidgets import QGraphicsItem, QGraphicsTextItem, QGraphicsProxyWidget
 from PyQt5.QtCore import Qt, QRectF
 from PyQt5.QtGui import QFont, QPainterPath, QPen, QColor, QBrush
 
@@ -6,6 +6,7 @@ class QDMGraphicsNode(QGraphicsItem):
     def __init__(self, node, parent=None):
         super().__init__(parent)
         self.node = node
+        self.content = self.node.content
 
         self._title_color = Qt.GlobalColor.white
         self._title_font = QFont("Arial")
@@ -21,9 +22,23 @@ class QDMGraphicsNode(QGraphicsItem):
         self._brush_title = QBrush(QColor("#FF313131"))
         self._brush_background = QBrush(QColor("#E3212121"))
 
+        # init title
         self.initTitle()
         self.title = self.node.title
+
+        # init sockets
+
+        # init content
+        self.initContent()
+
         self.initUI()
+
+    @property
+    def title(self): return self._title
+    @title.setter
+    def title(self, value):
+        self._title = value
+        self.title_item.setPlainText(value)
 
     def boundingRect(self):
         return QRectF(0, 0, self.width, self.height).normalized()
@@ -39,12 +54,15 @@ class QDMGraphicsNode(QGraphicsItem):
         self.title_item.setPos(self._padding, 0)
         self.title_item.setTextWidth(self.width -2 * self._padding)
 
-    @property
-    def title(self): return self._title
-    @title.setter
-    def title(self, value):
-        self._title = value
-        self.title_item.setPlainText(value)
+    def initContent(self):
+        self.graphicsContents = QGraphicsProxyWidget(self)
+        self.content.setGeometry(
+            int(self.edge_size),
+            int(self.title_height + self.edge_size),
+            int(self.width - 2 * self.edge_size),
+            int(self.height - 2 * self.edge_size - self.title_height)
+        )
+        self.graphicsContents.setWidget(self.content)
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget = None):
         # title
