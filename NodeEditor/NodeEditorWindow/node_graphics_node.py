@@ -3,8 +3,9 @@ from PyQt5.QtCore import Qt, QRectF
 from PyQt5.QtGui import QFont, QPainterPath, QPen, QColor, QBrush
 
 class QDMGraphicsNode(QGraphicsItem):
-    def __init__(self, node, title="Node Graphics Item", parent=None):
+    def __init__(self, node, parent=None):
         super().__init__(parent)
+        self.node = node
 
         self._title_color = Qt.GlobalColor.white
         self._title_font = QFont("Arial")
@@ -21,7 +22,7 @@ class QDMGraphicsNode(QGraphicsItem):
         self._brush_background = QBrush(QColor("#E3212121"))
 
         self.initTitle()
-        self.title = title
+        self.title = self.node.title
         self.initUI()
 
     def boundingRect(self):

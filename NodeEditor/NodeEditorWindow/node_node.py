@@ -5,7 +5,7 @@ class Node():
         self.scene = scene
         self.title = title
 
-        self.graphicsNode = QDMGraphicsNode(self, self.title)
+        self.graphicsNode = QDMGraphicsNode(self)
 
         self.scene.addNode(self)
         self.scene.graphicsScene.addItem(self.graphicsNode)
