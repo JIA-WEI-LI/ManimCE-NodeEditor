@@ -8,6 +8,7 @@ class Node():
         self.graphicsNode = QDMGraphicsNode(self, self.title)
 
         self.scene.addNode(self)
-        
+        self.scene.graphicsScene.addItem(self.graphicsNode)
+
         self.inputs = []
         self.outputs = []
