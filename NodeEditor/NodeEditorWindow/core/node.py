@@ -1,5 +1,5 @@
-from NodeEditorWindow.node_graphics_node import QDMGraphicsNode
-from NodeEditorWindow.node_content_widget import QDMNodeContentWidget
+from NodeEditorWindow.graphics.graphics_node import QDMGraphicsNode
+from NodeEditorWindow.content.node_content_widget import QDMNodeContentWidget
 
 class Node():
     def __init__(self, scene, title = "Undefined Node"):

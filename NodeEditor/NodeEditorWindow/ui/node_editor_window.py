@@ -1,16 +1,15 @@
-from PyQt5.QtWidgets import QGraphicsView, QWidget, QVBoxLayout, QGraphicsItem, QPushButton, QTextEdit, QApplication
-from PyQt5.QtGui import QBrush, QPen, QColor, QFont
-from PyQt5.QtCore import Qt, QFile
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QApplication
+from PyQt5.QtCore import QFile
 
-from NodeEditorWindow.node_scene import Scene
-from NodeEditorWindow.node_node import Node
-from NodeEditorWindow.node_graphics_view import QDMGraphicsView
+from NodeEditorWindow.core.scene import Scene
+from NodeEditorWindow.core.node import Node
+from NodeEditorWindow.graphics.graphics_view import QDMGraphicsView
 
 class NodeEditorWindow(QWidget):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-        self.stylesheet_filename = "NodeEditor/qss/nodestyle.qss"
+        self.stylesheet_filename = "NodeEditor/NodeEditorWindow/qss/nodestyle.qss"
         self.loadStylesheet(self.stylesheet_filename)
 
         self.initUI()
