@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 from NodeEditorWindow.graphics.graphics_edge import QDMGraphicsEdgeDirect, QDMGraphicsEdgeBezier
 
 EDGE_TYPE_DIRECT = 1
@@ -12,6 +15,7 @@ class Edge():
         self.graphicsEdge = QDMGraphicsEdgeDirect(self) if type == EDGE_TYPE_DIRECT else QDMGraphicsEdgeBezier(self)
 
         self.updatePositions()
+        logger.debug(f" Edge: {self.graphicsEdge.posSource} to {self.graphicsEdge.posDestination}")
         self.scene.graphicsScene.addItem(self.graphicsEdge)
 
     def updatePositions(self):
@@ -24,6 +28,8 @@ class Edge():
             end_pos[0] += self.end_socket.node.graphicsNode.pos().x()
             end_pos[1] += self.end_socket.node.graphicsNode.pos().y()
             self.graphicsEdge.setDestination(*end_pos)
+        logger.debug(f" Start socket: {self.start_socket}")
+        logger.debug(f" End   socket: {self.end_socket}")
         self.graphicsEdge.update()
 
     def remove_from_socket(self):

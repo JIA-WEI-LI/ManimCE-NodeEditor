@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 from NodeEditorWindow.graphics.graphics_socket import QDMGraphicsSocket
 
 LEFT_TOP = 1
@@ -15,10 +18,14 @@ class Socket():
         self.graphicsSocket = QDMGraphicsSocket(self.node.graphicsNode)
         self.graphicsSocket.setPos(*self.node.setSocketPosition(self.index, self.position))
 
+        logger.debug(f"Socket -- creating with {self.index} {self.position} for node {self.node}")
+
         self.edge = None
 
     def getSocketPosition(self):
+        logger.debug(f"Get socket position: {self.index} {self.position} for node {self.node}")
         res = self.node.setSocketPosition(self.index, self.position)
+        logger.debug(f"Socket position (res): {res}")
         return res
     
     def setConnectedEdge(self, edge):
