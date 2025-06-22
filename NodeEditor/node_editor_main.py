@@ -12,7 +12,7 @@ from NodeEditorWindow.ui.node_editor_window import NodeEditorWindow
 
 def main():
     app = QApplication(sys.argv + ['-platform', 'windows:darkmode=1'])
-    window = NodeEditorWindow()
+    window = NodeEditorWindow() 
 
     sys.exit(app.exec_())
 

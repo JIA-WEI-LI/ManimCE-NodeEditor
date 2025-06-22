@@ -22,14 +22,14 @@ class Node():
         self.outputs = []
         counter = 0
 
-        for items in inputs:
-            socket = Socket(node=self, index=counter, position=LEFT_BOTTOM)
+        for item in inputs:
+            socket = Socket(node=self, index=counter, position=LEFT_BOTTOM, socket_type=item)
             counter += 1
             self.inputs.append(socket)
 
         counter = 0
-        for items in outputs:
-            socket = Socket(node=self, index=counter, position=RIGHT_TOP)
+        for item in outputs:
+            socket = Socket(node=self, index=counter, position=RIGHT_TOP, socket_type=item)
             counter += 1
             self.outputs.append(socket)
 
@@ -53,3 +53,8 @@ class Node():
             + index * self.socket_spacing)
 
         return [x, y]
+    
+    def updateConnectedEdges(self, edge=None):
+        for socket in self.inputs + self.outputs:
+            if socket.hasEdge():
+                socket.edge.updatePositions()
