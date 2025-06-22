@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QGraphicsItem, QGraphicsTextItem, QGraphicsProxyWidget
 from PyQt5.QtCore import Qt, QRectF
-from PyQt5.QtGui import QFont, QPainterPath, QPen, QColor, QBrush
+from PyQt5.QtGui import QFont, QPainterPath, QPen, QColor, QBrush, QPainter
 
 class QDMGraphicsNode(QGraphicsItem):
     def __init__(self, node, parent=None):
@@ -27,6 +27,7 @@ class QDMGraphicsNode(QGraphicsItem):
         self.title = self.node.title
 
         # init sockets
+        self.initSockets()
 
         # init content
         self.initContent()
@@ -64,7 +65,10 @@ class QDMGraphicsNode(QGraphicsItem):
         )
         self.graphicsContents.setWidget(self.content)
 
-    def paint(self, painter, QStyleOptionGraphicsItem, widget = None):
+    def initSockets(self):
+        pass
+
+    def paint(self, painter: QPainter, QStyleOptionGraphicsItem, widget = None):
         # title
         path_title = QPainterPath()
         path_title.setFillRule(Qt.FillRule.WindingFill)
