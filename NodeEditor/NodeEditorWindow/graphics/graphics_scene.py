@@ -1,6 +1,6 @@
 import math
 from PyQt5.QtCore import QLine
-from PyQt5.QtGui import QColor, QPen
+from PyQt5.QtGui import QColor, QPen, QPainter
 from PyQt5.QtWidgets import QGraphicsScene
 
 class QDMGraphicsScene(QGraphicsScene):
@@ -28,7 +28,7 @@ class QDMGraphicsScene(QGraphicsScene):
     def setGraphicsScene(self, width, height):
         self.setSceneRect(-width//2, -height//2, width, height)
 
-    def drawBackground(self, painter, rect):
+    def drawBackground(self, painter: QPainter, rect):
         super().drawBackground(painter, rect)
 
         left = int(math.floor(rect.left()))
