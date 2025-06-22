@@ -1,7 +1,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from NodeEditorWindow.graphics.graphics_socket import QDMGraphicsSocket
+from node_editor_window.graphics.graphics_socket import QDMGraphicsSocket
 
 LEFT_TOP = 1
 LEFT_BOTTOM = 2
