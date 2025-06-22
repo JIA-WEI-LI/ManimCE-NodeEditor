@@ -16,6 +16,8 @@ class QDMGraphicsEdge(QGraphicsPathItem):
 
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)
 
+        self.setZValue(-1) 
+
         self.posSource = [0, 0]
         self.posDestination = [200, 100]
 
@@ -38,4 +40,11 @@ class QDMGraphicsEdgeDirect(QDMGraphicsEdge):
 
 class QDMGraphicsEdgeBezier(QDMGraphicsEdge):
     def updatePath(self):
-        pass
+        s = self.posSource
+        d = self.posDestination
+        dist = (d[0] - s[0]) * 0.5
+        if s[0] > d[0]: dist *= -1
+
+        path = QPainterPath(QPointF(self.posSource[0], self.posSource[1]))
+        path.cubicTo( s[0] + dist, s[1], d[0] - dist, d[1], self.posDestination[0], self.posDestination[1])
+        self.setPath(path)
