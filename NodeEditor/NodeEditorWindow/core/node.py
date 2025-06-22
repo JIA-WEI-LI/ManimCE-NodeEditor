@@ -52,4 +52,4 @@ class Node():
             + self.graphicsNode._padding 
             + index * self.socket_spacing)
 
-        return x, y
+        return [x, y]
