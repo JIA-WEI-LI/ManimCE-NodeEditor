@@ -26,7 +26,13 @@ class NodeEditorWindow(QWidget):
         self.scene = Scene()
         self.graphicsScene = self.scene.graphicsScene
 
-        node = Node(self.scene, "My Node", inputs=[1, 2, 3], outputs=[1])
+        node_1 = Node(self.scene, "My Node 1", inputs=[1, 2, 3], outputs=[1])
+        node_2 = Node(self.scene, "My Node 2", inputs=[1, 2, 3], outputs=[1])
+        node_3 = Node(self.scene, "My Node 3", inputs=[1, 2, 3], outputs=[1])
+
+        node_1.setPos(-350, -250)
+        node_2.setPos(-75, 0)
+        node_3.setPos(200, -150)
 
         # Create graphics view
         self.view = QDMGraphicsView(self.scene.graphicsScene, self)

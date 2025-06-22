@@ -33,6 +33,12 @@ class Node():
             counter += 1
             self.outputs.append(socket)
 
+    @property
+    def pos(self):
+        return self.graphicsNode.setPos()       # QPonintF
+    def setPos(self, x: int, y: int):
+        self.graphicsNode.setPos(x, y)
+
     def setSocketPosition(self, index: int, position: str):
         x = 0 if position in (LEFT_TOP, LEFT_BOTTOM) else self.graphicsNode.width
         if position in (LEFT_BOTTOM, RIGHT_BOTTOM):
@@ -40,12 +46,10 @@ class Node():
             - self.graphicsNode.edge_size
             - self.graphicsNode._padding
             - index * self.socket_spacing)
-            import inspect, os; print('>', os.path.basename(inspect.stack()[0].filename), '-', inspect.stack()[0].lineno, '>>> ', position,  y)
         else:
             y = (self.graphicsNode.title_height 
             + self.graphicsNode.edge_size 
             + self.graphicsNode._padding 
             + index * self.socket_spacing)
-            import inspect, os; print('>', os.path.basename(inspect.stack()[0].filename), '-', inspect.stack()[0].lineno, '>>> ', y)
 
         return x, y
