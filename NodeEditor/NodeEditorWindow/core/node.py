@@ -53,3 +53,8 @@ class Node():
             + index * self.socket_spacing)
 
         return [x, y]
+    
+    def updateConnectedEdges(self, edge=None):
+        for socket in self.inputs + self.outputs:
+            if socket.hasEdge():
+                socket.edge.updatePositions()
