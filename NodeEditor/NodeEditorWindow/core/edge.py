@@ -7,7 +7,7 @@ EDGE_TYPE_DIRECT = 1
 EDGE_TYPE_BEZIER = 2
 
 class Edge():
-    def __init__(self, scene, start_socket, end_socket, type:int = EDGE_TYPE_BEZIER):
+    def __init__(self, scene, start_socket, end_socket, edge_type:int = EDGE_TYPE_BEZIER):
         self.scene = scene
         self.start_socket = start_socket
         self.end_socket = end_socket
@@ -16,7 +16,7 @@ class Edge():
         if self.end_socket is not None:
             self.end_socket.edge = self
         
-        self.graphicsEdge = QDMGraphicsEdgeDirect(self) if type == EDGE_TYPE_DIRECT else QDMGraphicsEdgeBezier(self)
+        self.graphicsEdge = QDMGraphicsEdgeDirect(self) if edge_type == EDGE_TYPE_DIRECT else QDMGraphicsEdgeBezier(self)
 
         self.updatePositions()
         logger.debug(f" Edge: {self.graphicsEdge.posSource} to {self.graphicsEdge.posDestination}")
@@ -32,8 +32,6 @@ class Edge():
             end_pos[0] += self.end_socket.node.graphicsNode.pos().x()
             end_pos[1] += self.end_socket.node.graphicsNode.pos().y()
             self.graphicsEdge.setDestination(*end_pos)
-        logger.debug(f" Start socket: {self.start_socket}")
-        logger.debug(f" End   socket: {self.end_socket}")
         self.graphicsEdge.update()
 
     def remove_from_socket(self):
