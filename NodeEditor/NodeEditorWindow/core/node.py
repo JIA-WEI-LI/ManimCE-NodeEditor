@@ -1,8 +1,8 @@
 from typing import List
 
-from NodeEditorWindow.graphics.graphics_node import QDMGraphicsNode
-from NodeEditorWindow.content.node_content_widget import QDMNodeContentWidget
-from NodeEditorWindow.core.socket import Socket, LEFT_TOP, RIGHT_TOP, LEFT_BOTTOM, RIGHT_BOTTOM
+from node_editor_window.graphics.graphics_node import QDMGraphicsNode
+from node_editor_window.content.node_content_widget import QDMNodeContentWidget
+from node_editor_window.core.socket import Socket, LEFT_TOP, RIGHT_TOP, LEFT_BOTTOM, RIGHT_BOTTOM
 
 class Node():
     def __init__(self, scene, title:str = "Undefined Node", inputs:List = [], outputs:List = []):
