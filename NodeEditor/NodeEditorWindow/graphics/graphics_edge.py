@@ -21,6 +21,12 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         self.posSource = [0, 0]
         self.posDestination = [200, 100]
 
+    def setSource(self, x: int, y: int):
+        self.posSource = [x, y]
+    
+    def setDestination(self, x: int, y: int):
+        self.posDestination = [x, y]
+
     def paint(self, painter: QPainter, QStyleOptionGraphicsItem, widget = None):
         self.updatePath()
 

@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 from NodeEditorWindow.graphics.graphics_edge import QDMGraphicsEdgeDirect, QDMGraphicsEdgeBezier
 
 EDGE_TYPE_DIRECT = 1
@@ -11,4 +14,34 @@ class Edge():
 
         self.graphicsEdge = QDMGraphicsEdgeDirect(self) if type == EDGE_TYPE_DIRECT else QDMGraphicsEdgeBezier(self)
 
+        self.updatePositions()
+        logger.debug(f" Edge: {self.graphicsEdge.posSource} to {self.graphicsEdge.posDestination}")
         self.scene.graphicsScene.addItem(self.graphicsEdge)
+
+    def updatePositions(self):
+        source_pos = self.start_socket.getSocketPosition()
+        source_pos[0] += self.start_socket.node.graphicsNode.pos().x()
+        source_pos[1] += self.start_socket.node.graphicsNode.pos().y()
+        self.graphicsEdge.setSource(*source_pos)
+        if self.end_socket is not None:
+            end_pos = self.end_socket.getSocketPosition()
+            end_pos[0] += self.end_socket.node.graphicsNode.pos().x()
+            end_pos[1] += self.end_socket.node.graphicsNode.pos().y()
+            self.graphicsEdge.setDestination(*end_pos)
+        logger.debug(f" Start socket: {self.start_socket}")
+        logger.debug(f" End   socket: {self.end_socket}")
+        self.graphicsEdge.update()
+
+    def remove_from_socket(self):
+        if self.start_socket is not None:
+            self.start_socket.edge = None
+        if self.end_socket is not None:
+            self.end_socket.edge = None
+        self.start_socket = None
+        self.end_socket = None
+
+    def remove(self):
+        self.remove_from_socket()
+        self.scene.graphicsScene.removeItem(self.graphicsEdge)
+        self.graphicsEdge = None
+        self.scene.removeEdge(self)
