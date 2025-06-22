@@ -9,13 +9,14 @@ RIGHT_TOP = 3
 RIGHT_BOTTOM = 4
 
 class Socket():
-    def __init__(self, node, index:int = 0, position:int =LEFT_TOP):
+    def __init__(self, node, index:int = 0, position:int = LEFT_TOP, socket_type:int = 1):
 
         self.node = node
         self.index = index
         self.position = position
+        self.socket_type = socket_type
 
-        self.graphicsSocket = QDMGraphicsSocket(self.node.graphicsNode)
+        self.graphicsSocket = QDMGraphicsSocket(self.node.graphicsNode, self.socket_type)
         self.graphicsSocket.setPos(*self.node.setSocketPosition(self.index, self.position))
 
         logger.debug(f"Socket -- creating with {self.index} {self.position} for node {self.node}")
