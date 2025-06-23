@@ -1,7 +1,16 @@
-import os
+import logging
+logger = logging.getLogger(__name__)
+
 from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtGui import QPainter, QMouseEvent
 from PyQt5.QtCore import Qt, QEvent
+
+from node_editor_window.graphics.graphics_socket import QDMGraphicsSocket
+
+MODE_NOOP = 1
+MODE_EDGE_DRAG = 2
+
+EDGE_DRAG_START_THRESHOLD = 10
 
 class QDMGraphicsView(QGraphicsView):
     def __init__(self, graphicsScene, parent=None):
@@ -12,6 +21,8 @@ class QDMGraphicsView(QGraphicsView):
         self.initUI()
 
         self.setScene(self.graphicsScene)
+
+        self.mode = MODE_NOOP
 
         self.zoomInFator = 1.25
         self.zoomClamp = False
@@ -78,9 +89,43 @@ class QDMGraphicsView(QGraphicsView):
         self.setDragMode(QGraphicsView.DragMode.NoDrag)
 
     def leftMouseButtonPress(self, event):
+        item = self.getItemAtClick(event)
+
+        self.left_lmb_click_scene_pos = self.mapToScene(event.pos())
+        if isinstance(item, QDMGraphicsSocket):
+            if self.mode == MODE_NOOP:
+                self.mode = MODE_EDGE_DRAG
+                logger.debug("Start dragging edge")
+                logger.debug("  assign Start Socket")
+                return
+        
+        if self.mode == MODE_EDGE_DRAG:
+            self.mode = MODE_NOOP
+            logger.debug("End dragging edge")
+            if isinstance(item, QDMGraphicsSocket):
+                logger.debug("  assign End Socket")
+                return
+            
         super().mousePressEvent(event)
+            
 
     def leftMouseButtonRelease(self, event):
+        item = self.getItemAtClick(event)
+
+        if self.mode == MODE_EDGE_DRAG:
+
+            new_lmb_relaese_scene_pos = self.mapToScene(event.pos())
+            dist_scene = new_lmb_relaese_scene_pos - self.left_lmb_click_scene_pos
+
+            if (dist_scene.x()**2 + dist_scene.y()**2) < (EDGE_DRAG_START_THRESHOLD**2):
+                pass
+            else:
+                self.mode = MODE_NOOP
+                logger.debug("End dragging edge")
+                if isinstance(item, QDMGraphicsSocket):
+                    logger.debug("  assign End Socket")
+                    return
+
         super().mouseReleaseEvent(event)
 
     def rightMouseButtonPress(self, event):
@@ -88,6 +133,12 @@ class QDMGraphicsView(QGraphicsView):
 
     def rightMouseButtonRelease(self, event):
         super().mouseReleaseEvent(event)
+
+    def getItemAtClick(self, event):
+        pos = event.pos()
+        obj = self.itemAt(pos)
+
+        return obj
 
     def wheelEvent(self, event):
         # calculate out zoom factor
