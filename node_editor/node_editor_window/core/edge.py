@@ -36,6 +36,8 @@ class Edge():
             end_pos[0] += self.end_socket.node.graphicsNode.pos().x()
             end_pos[1] += self.end_socket.node.graphicsNode.pos().y()
             self.graphicsEdge.setDestination(*end_pos)
+        else:
+            self.graphicsEdge.setDestination(*source_pos)
         self.graphicsEdge.update()
 
     def remove_from_socket(self):

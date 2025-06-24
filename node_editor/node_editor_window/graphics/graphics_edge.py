@@ -11,8 +11,11 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         self._color_selected = QColor("#00FF00")
         self._pen = QPen(self._color)
         self._pen_selected = QPen(self._color_selected)
+        self._pen_dragging = QPen(self._color)
+        self._pen_dragging.setStyle(Qt.PenStyle.DashLine)
         self._pen.setWidthF(2)
         self._pen_selected.setWidthF(2)
+        self._pen_dragging.setWidthF(2)
 
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)
 
@@ -30,7 +33,10 @@ class QDMGraphicsEdge(QGraphicsPathItem):
     def paint(self, painter: QPainter, QStyleOptionGraphicsItem, widget = None):
         self.updatePath()
 
-        painter.setPen(self._pen if not self.isSelected() else self._pen_selected)
+        if self.edge.end_socket is None:
+            painter.setPen(self._pen_dragging)
+        else:
+            painter.setPen(self._pen if not self.isSelected() else self._pen_selected)
         painter.setBrush(Qt.BrushStyle.NoBrush)
         painter.drawPath(self.path())
 
