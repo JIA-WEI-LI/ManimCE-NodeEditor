@@ -155,6 +155,8 @@ class QDMGraphicsView(QGraphicsView):
     def edgeDragStart(self, item):
         logger.debug("Start dragging edge")
         logger.debug(f"    assign Start Socket to: {item.socket}")
+        self.previousEdge = item.socket.edge
+        self.last_start_socket = item.socket
         self.dragEdge = Edge(self.graphicsScene.scene, item.socket, None, EDGE_TYPE_BEZIER)
         logger.debug(f"    dragEdge: {self.dragEdge}")
     
@@ -164,16 +166,22 @@ class QDMGraphicsView(QGraphicsView):
 
         if isinstance(item, QDMGraphicsSocket):
             logger.debug(f"    assign End Socket to: {item.socket}")
+            if self.previousEdge is not None: self.previousEdge.remove()
+            logger.debug("    previous edge removed")
+            self.dragEdge.start_socket = self.last_start_socket
             self.dragEdge.end_socket = item.socket
             self.dragEdge.start_socket.setConnectedEdge(self.dragEdge)
             self.dragEdge.end_socket.setConnectedEdge(self.dragEdge)
-            logger.debug(f"    assigned start and end sockets to drag edge")
+            logger.debug(f"    reassigned start and end sockets to drag edge")
             self.dragEdge.updatePositions()
             return True
         
         logger.debug("End dragging edge")
         self.dragEdge.remove()
         self.dragEdge = None
+        logger.debug(f"about to set socket to previous edge: {self.previousEdge}")
+        if self.previousEdge is None:
+            self.previousEdge.start_socket.edge = self.previousEdge
         logger.debug("everything done.")
         return False
     
