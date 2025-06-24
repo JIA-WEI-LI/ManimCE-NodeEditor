@@ -3,8 +3,9 @@ from PyQt5.QtGui import QColor, QPen, QPainter
 from PyQt5.QtCore import QRectF
 
 class QDMGraphicsSocket(QGraphicsItem):
-    def __init__(self, parent = None, socket_type:int = 1):
-        super().__init__(parent)
+    def __init__(self, socket, socket_type:int = 1):
+        self.socket = socket
+        super().__init__(socket.node.graphicsNode)
 
         self.radius = 6.0
         self.outline_width = 1.0

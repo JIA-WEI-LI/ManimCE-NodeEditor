@@ -21,6 +21,10 @@ class Edge():
         self.updatePositions()
         logger.debug(f" Edge: {self.graphicsEdge.posSource} to {self.graphicsEdge.posDestination}")
         self.scene.graphicsScene.addItem(self.graphicsEdge)
+        self.scene.addEdge(self)
+
+    def __str__(self):
+        return "< Edge %s ... %s >" % (hex(id(self))[2:5], hex(id(self))[-3:])
 
     def updatePositions(self):
         source_pos = self.start_socket.getSocketPosition()

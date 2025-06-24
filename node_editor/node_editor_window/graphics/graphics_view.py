@@ -6,6 +6,7 @@ from PyQt5.QtGui import QPainter, QMouseEvent
 from PyQt5.QtCore import Qt, QEvent
 
 from node_editor_window.graphics.graphics_socket import QDMGraphicsSocket
+from node_editor_window.graphics.graphics_edge import QDMGraphicsEdge
 
 MODE_NOOP = 1
 MODE_EDGE_DRAG = 2
@@ -119,6 +120,20 @@ class QDMGraphicsView(QGraphicsView):
 
     def rightMouseButtonPress(self, event):
         super().mousePressEvent(event)
+
+        item = self.getItemAtClick(event)
+        if isinstance(item, QDMGraphicsEdge): logger.debug(f"RBM DBUG: {item.edge} connecting sockets: {item.edge.start_socket} <--> {item.edge.end_socket}")
+        if isinstance(item, QDMGraphicsSocket): logger.debug(f"RBM DEBUG: {item.socket} has edge {item.socket.edge}")
+
+        if item is None:
+            logger.debug(f"SCENE: {self.graphicsScene}")
+            logger.debug("    NODE:")
+            for node in self.graphicsScene.scene.nodes:
+                logger.debug(f"        {node}")
+            logger.debug("    EDGE:")
+            for edge in self.graphicsScene.scene.edges:
+                logger.debug(f"        {edge}") 
+            return
 
     def rightMouseButtonRelease(self, event):
         super().mouseReleaseEvent(event)
