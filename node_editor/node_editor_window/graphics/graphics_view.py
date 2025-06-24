@@ -5,7 +5,9 @@ from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtGui import QPainter, QMouseEvent
 from PyQt5.QtCore import Qt, QEvent
 
+from node_editor_window.core.edge import Edge, EDGE_TYPE_BEZIER
 from node_editor_window.graphics.graphics_socket import QDMGraphicsSocket
+from node_editor_window.graphics.graphics_edge import QDMGraphicsEdge
 
 MODE_NOOP = 1
 MODE_EDGE_DRAG = 2
@@ -120,8 +122,29 @@ class QDMGraphicsView(QGraphicsView):
     def rightMouseButtonPress(self, event):
         super().mousePressEvent(event)
 
+        item = self.getItemAtClick(event)
+        if isinstance(item, QDMGraphicsEdge): logger.debug(f"RBM DEBUG: {item.edge} connecting sockets: {item.edge.start_socket} <--> {item.edge.end_socket}")
+        if isinstance(item, QDMGraphicsSocket): logger.debug(f"RBM DEBUG: {item.socket} has edge {item.socket.edge}")
+
+        if item is None:
+            logger.debug(f"SCENE: {self.graphicsScene}")
+            logger.debug("    NODE:")
+            for node in self.graphicsScene.scene.nodes:
+                logger.debug(f"        {node}")
+            logger.debug("    EDGE:")
+            for edge in self.graphicsScene.scene.edges:
+                logger.debug(f"        {edge}") 
+            return
+
     def rightMouseButtonRelease(self, event):
         super().mouseReleaseEvent(event)
+
+    def mouseMoveEvent(self, event):
+        if self.mode == MODE_EDGE_DRAG:
+            pos = self.mapToScene(event.pos())
+            self.dragEdge.graphicsEdge.setDestination(pos.x(), pos.y())
+            self.dragEdge.graphicsEdge.update()
+        super().mouseMoveEvent(event)
 
     def getItemAtClick(self, event):
         """Return the item at the click/release mouse button position"""
@@ -131,16 +154,38 @@ class QDMGraphicsView(QGraphicsView):
     
     def edgeDragStart(self, item):
         logger.debug("Start dragging edge")
-        logger.debug("  assign Start Socket")
+        logger.debug(f"    assign Start Socket to: {item.socket}")
+        self.previousEdge = item.socket.edge
+        self.last_start_socket = item.socket
+        self.dragEdge = Edge(self.graphicsScene.scene, item.socket, None, EDGE_TYPE_BEZIER)
+        logger.debug(f"    dragEdge: {self.dragEdge}")
     
     def edgeDragEnd(self, item) -> bool:
         """Return true if skip the rest of the code"""
         self.mode = MODE_NOOP
-        logger.debug("End dragging edge")
 
         if isinstance(item, QDMGraphicsSocket):
-            logger.debug("  assign End Socket")
+            logger.debug(f"    ~, previous edge: {self.previousEdge}")
+            if item.socket.hasEdge():
+                item.socket.edge.remove()
+            logger.debug(f"    assign End Socket to: {item.socket}")
+            if self.previousEdge is not None: self.previousEdge.remove()
+            logger.debug("    previous edge removed")
+            self.dragEdge.start_socket = self.last_start_socket
+            self.dragEdge.end_socket = item.socket
+            self.dragEdge.start_socket.setConnectedEdge(self.dragEdge)
+            self.dragEdge.end_socket.setConnectedEdge(self.dragEdge)
+            logger.debug(f"    reassigned start and end sockets to drag edge")
+            self.dragEdge.updatePositions()
             return True
+        
+        logger.debug("End dragging edge")
+        self.dragEdge.remove()
+        self.dragEdge = None
+        logger.debug(f"about to set socket to previous edge: {self.previousEdge}")
+        if self.previousEdge is not None:
+            self.previousEdge.start_socket.edge = self.previousEdge
+        logger.debug("everything done.")
         return False
     
     def destanceBetweenClickAndReleaseOff(self, event):

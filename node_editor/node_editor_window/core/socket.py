@@ -16,12 +16,15 @@ class Socket():
         self.position = position
         self.socket_type = socket_type
 
-        self.graphicsSocket = QDMGraphicsSocket(self.node.graphicsNode, self.socket_type)
+        self.graphicsSocket = QDMGraphicsSocket(self, self.socket_type)
         self.graphicsSocket.setPos(*self.node.setSocketPosition(self.index, self.position))
 
         logger.debug(f"Socket -- creating with {self.index} {self.position} for node {self.node}")
 
         self.edge = None
+
+    def __str__(self):
+        return "< Socket %s ... %s >" % (hex(id(self))[2:5], hex(id(self))[-3:])
 
     def getSocketPosition(self):
         logger.debug(f"Get socket position: {self.index} {self.position} for node {self.node}")

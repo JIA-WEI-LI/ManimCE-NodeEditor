@@ -21,6 +21,10 @@ class Edge():
         self.updatePositions()
         logger.debug(f" Edge: {self.graphicsEdge.posSource} to {self.graphicsEdge.posDestination}")
         self.scene.graphicsScene.addItem(self.graphicsEdge)
+        self.scene.addEdge(self)
+
+    def __str__(self):
+        return "< Edge %s ... %s >" % (hex(id(self))[2:5], hex(id(self))[-3:])
 
     def updatePositions(self):
         source_pos = self.start_socket.getSocketPosition()
@@ -32,6 +36,8 @@ class Edge():
             end_pos[0] += self.end_socket.node.graphicsNode.pos().x()
             end_pos[1] += self.end_socket.node.graphicsNode.pos().y()
             self.graphicsEdge.setDestination(*end_pos)
+        else:
+            self.graphicsEdge.setDestination(*source_pos)
         self.graphicsEdge.update()
 
     def remove_from_socket(self):
