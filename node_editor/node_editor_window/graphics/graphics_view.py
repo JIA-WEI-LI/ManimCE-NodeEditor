@@ -165,6 +165,9 @@ class QDMGraphicsView(QGraphicsView):
         self.mode = MODE_NOOP
 
         if isinstance(item, QDMGraphicsSocket):
+            logger.debug(f"    ~, previous edge: {self.previousEdge}")
+            if item.socket.hasEdge():
+                item.socket.edge.remove()
             logger.debug(f"    assign End Socket to: {item.socket}")
             if self.previousEdge is not None: self.previousEdge.remove()
             logger.debug("    previous edge removed")
@@ -180,7 +183,7 @@ class QDMGraphicsView(QGraphicsView):
         self.dragEdge.remove()
         self.dragEdge = None
         logger.debug(f"about to set socket to previous edge: {self.previousEdge}")
-        if self.previousEdge is None:
+        if self.previousEdge is not None:
             self.previousEdge.start_socket.edge = self.previousEdge
         logger.debug("everything done.")
         return False
