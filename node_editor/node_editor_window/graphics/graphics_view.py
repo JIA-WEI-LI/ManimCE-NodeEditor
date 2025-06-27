@@ -40,6 +40,7 @@ class QDMGraphicsView(QGraphicsView):
         self.setViewportUpdateMode(QGraphicsView.ViewportUpdateMode.FullViewportUpdate)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.setDragMode(QGraphicsView.DragMode.RubberBandDrag)
 
         self.setTransformationAnchor(QGraphicsView.ViewportAnchor.AnchorUnderMouse)
 
@@ -63,7 +64,7 @@ class QDMGraphicsView(QGraphicsView):
         else:
             super().mouseReleaseEvent(event)
     
-    def middleMouseButtonPress(self, event):
+    def middleMouseButtonPress(self, event: QMouseEvent):
         releaseEvent = QMouseEvent(QEvent.Type.MouseButtonRelease, 
                                    event.localPos(), 
                                    event.screenPos(), 
@@ -80,7 +81,7 @@ class QDMGraphicsView(QGraphicsView):
                                 event.modifiers())
         super().mousePressEvent(fakeEvent)
 
-    def middleMouseButtonRelease(self, event):
+    def middleMouseButtonRelease(self, event: QMouseEvent):
         fakeEvent = QMouseEvent(event.type(), 
                                 event.localPos(), 
                                 event.screenPos(),  
@@ -90,11 +91,27 @@ class QDMGraphicsView(QGraphicsView):
         super().mouseReleaseEvent(fakeEvent)
         self.setDragMode(QGraphicsView.DragMode.NoDrag)
 
-    def leftMouseButtonPress(self, event):
+    def leftMouseButtonPress(self, event: QMouseEvent):
         # get the which we click mouse button
         item = self.getItemAtClick(event)
 
         self.left_lmb_click_scene_pos = self.mapToScene(event.pos())
+        logger.debug(f"LMB Click on item: {item} - {self.debug_modifiers(event)}")
+
+        if hasattr(item, "node") or isinstance(item, QDMGraphicsEdge) or item is None:
+            if event.modifiers() & Qt.KeyboardModifier.ShiftModifier:
+                event.ignore()
+                fakeEvent = QMouseEvent(
+                    QEvent.Type.MouseButtonPress,
+                    event.localPos(),
+                    event.screenPos(),
+                    Qt.MouseButton.LeftButton,
+                    event.buttons() | Qt.MouseButton.LeftButton,
+                    event.modifiers() | Qt.KeyboardModifier.ControlModifier
+                )
+                super().mousePressEvent(fakeEvent)
+                return
+                
         if isinstance(item, QDMGraphicsSocket):
             if self.mode == MODE_NOOP:
                 self.mode = MODE_EDGE_DRAG
@@ -107,11 +124,24 @@ class QDMGraphicsView(QGraphicsView):
             
         super().mousePressEvent(event)
 
-    def leftMouseButtonRelease(self, event):
+    def leftMouseButtonRelease(self, event: QMouseEvent):
         # get the which we release mouse button
         item = self.getItemAtClick(event)
 
-        # if the mode is edge drag, check if the distance between click and release is enough
+        if hasattr(item, "node") or isinstance(item, QDMGraphicsEdge) or item is None:
+            if event.modifiers() & Qt.KeyboardModifier.ShiftModifier:
+                event.ignore()
+                fakeEvent = QMouseEvent(
+                    event.type(),
+                    event.localPos(),
+                    event.screenPos(),
+                    Qt.MouseButton.LeftButton,
+                    Qt.MouseButton.NoButton,
+                    event.modifiers() | Qt.KeyboardModifier.ControlModifier
+                )
+                super().mouseReleaseEvent(fakeEvent)
+                return
+        
         if self.mode == MODE_EDGE_DRAG:
             if self.destanceBetweenClickAndReleaseOff(event):
                 res = self.edgeDragEnd(item)
@@ -119,7 +149,7 @@ class QDMGraphicsView(QGraphicsView):
 
         super().mouseReleaseEvent(event)
 
-    def rightMouseButtonPress(self, event):
+    def rightMouseButtonPress(self, event: QMouseEvent):
         super().mousePressEvent(event)
 
         item = self.getItemAtClick(event)
@@ -136,15 +166,22 @@ class QDMGraphicsView(QGraphicsView):
                 logger.debug(f"        {edge}") 
             return
 
-    def rightMouseButtonRelease(self, event):
+    def rightMouseButtonRelease(self, event: QMouseEvent):
         super().mouseReleaseEvent(event)
 
-    def mouseMoveEvent(self, event):
+    def mouseMoveEvent(self, event: QMouseEvent):
         if self.mode == MODE_EDGE_DRAG:
             pos = self.mapToScene(event.pos())
             self.dragEdge.graphicsEdge.setDestination(pos.x(), pos.y())
             self.dragEdge.graphicsEdge.update()
         super().mouseMoveEvent(event)
+
+    def debug_modifiers(self, event):
+        out = "KEYS: "
+        if event.modifiers() & Qt.KeyboardModifier.ShiftModifier: out += "SHIFT "
+        if event.modifiers() & Qt.KeyboardModifier.ControlModifier: out += "CTRL "
+        if event.modifiers() & Qt.KeyboardModifier.AltModifier: out += "ALT "
+        return out
 
     def getItemAtClick(self, event):
         """Return the item at the click/release mouse button position"""
