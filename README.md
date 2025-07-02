@@ -11,7 +11,7 @@ This tool enables intuitive construction of animation sequences using nodes and 
 
 | Milestone                                            | Progress |
 |-----------------------------------------------------|----------|
-| 1. Basic Node Editor Features                        | 66%      |
+| 1. Basic Node Editor Features                        | 100%      |
 | 2. Advanced Node Editor Features                     | 0%       |
 | 3. Node Editor Packaging                             | 0%       |
 | 4. Node Editor Embedded Window Integration           | 0%       |
@@ -180,6 +180,7 @@ classDiagram
         - int zoom = 5
         - int zoomStep = 1
         - list zoomRange = [0, 10]
+        - QDMCutLine cutline
         + __init__(graphicsScene, parent=None)
         + initUI()
         + mousePressEvent(event)
@@ -199,6 +200,14 @@ classDiagram
         - layout: QVBoxLayout
         - widget_label: QLabel
         - QTextEdit
+    }
+
+    class QDMCutLine {
+        - List line_points = []
+        - _pen: QPen
+        + __init__(node, parent=None)
+        + boundingRect() QRectF
+        + paint(painter, QStyleOptionGraphicsItem, widget=None)
     }
 
     class NodeEditorWindow {
@@ -226,6 +235,7 @@ classDiagram
     Socket "1" --> "1" QDMGraphicsSocket : graphicsSocket
     Edge "1" --> "1" QDMGraphicsEdge : graphicsEdge
     Scene "1" --> "1" QDMGraphicsScene : graphicsScene
+    QDMCutLine "1" --> "1" QGraphicsView: graphicsView
     QDMGraphicsNode ..|> QGraphicsItem
     QDMGraphicsEdge ..|> QGraphicsPathItem
     QDMGraphicsSocket ..|> QGraphicsItem
