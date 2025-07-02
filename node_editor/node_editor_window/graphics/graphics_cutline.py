@@ -14,8 +14,8 @@ class QDMCutLine(QGraphicsItem):
 
         self.setZValue(2)
 
-    def boundRect(self):
-        return QRectF(0, 0, 0, 1)
+    def boundingRect(self):
+        return QRectF(0, 0, 1, 1)
     
     def paint(self, painter: QPainter, QStyleOptionGraphicsItem, widget=None):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)

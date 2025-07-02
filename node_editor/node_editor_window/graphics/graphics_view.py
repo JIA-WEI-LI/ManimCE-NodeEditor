@@ -221,7 +221,13 @@ class QDMGraphicsView(QGraphicsView):
             super().keyPressEvent(event)
 
     def cutIntersectingEdges(self, event):
-        pass
+        for ix in range(len(self.cutline.line_points) - 1):
+            p1 = self.cutline.line_points[ix]
+            p2 = self.cutline.line_points[ix + 1]
+
+            for edge in self.graphicsScene.scene.edges:
+                if edge.graphicsEdge.intersectsWith(p1, p2):
+                    edge.remove()
 
     def deleteSelected(self):
         for item in self.graphicsScene.selectedItems():
