@@ -1,3 +1,5 @@
+
+import os
 import logging
 logger = logging.getLogger(__name__)
 
@@ -212,11 +214,18 @@ class QDMGraphicsView(QGraphicsView):
         super().mouseMoveEvent(event)
 
     def keyPressEvent(self, event: QKeyEvent):
+        save_path = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..", "..", "saves", "graph.json")
+        )
         if event.key() == Qt.Key.Key_Delete:
             if not self.editingFlag:
                 self.deleteSelected()
             else: 
                 super().keyPressEvent(event)
+        elif event.key() == Qt.Key.Key_S and event.modifiers() & Qt.KeyboardModifier.ControlModifier:
+            self.graphicsScene.scene.saveToFile(save_path)
+        elif event.key() == Qt.Key.Key_L and event.modifiers() & Qt.KeyboardModifier.ControlModifier:
+            self.graphicsScene.scene.loadFromFile(save_path)
         else:
             super().keyPressEvent(event)
 
