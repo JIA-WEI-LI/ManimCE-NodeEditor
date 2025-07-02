@@ -1,4 +1,6 @@
 from typing import List
+import logging
+logger = logging.getLogger(__name__)
 
 from node_editor_window.graphics.graphics_node import QDMGraphicsNode
 from node_editor_window.content.node_content_widget import QDMNodeContentWidget
@@ -61,3 +63,17 @@ class Node():
         for socket in self.inputs + self.outputs:
             if socket.hasEdge():
                 socket.edge.updatePositions()
+
+    def remove(self):
+        logger.debug(f"> Remove Node {self}")
+        logger.debug(f" - remove all edge from sockets")
+        for socket in (self.inputs + self.outputs):
+            if socket.hasEdge():
+                logger.debug(f"     - removing from socket: {socket} edge {socket.edge}")
+                socket.edge.remove()
+        logger.debug(f" - remove graphicsNode")
+        self.scene.graphicsScene.removeItem(self.graphicsNode)
+        self.graphicsNode = None
+        logger.debug(f" - remove node from scene")
+        self.scene.removeNode(self)
+        logger.debug(f" - everythings was done.")
