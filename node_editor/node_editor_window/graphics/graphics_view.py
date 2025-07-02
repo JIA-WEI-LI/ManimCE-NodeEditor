@@ -2,7 +2,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from PyQt5.QtWidgets import QGraphicsView
-from PyQt5.QtGui import QPainter, QMouseEvent
+from PyQt5.QtGui import QPainter, QMouseEvent, QKeyEvent
 from PyQt5.QtCore import Qt, QEvent
 
 from node_editor_window.core.edge import Edge, EDGE_TYPE_BEZIER
@@ -175,6 +175,19 @@ class QDMGraphicsView(QGraphicsView):
             self.dragEdge.graphicsEdge.setDestination(pos.x(), pos.y())
             self.dragEdge.graphicsEdge.update()
         super().mouseMoveEvent(event)
+
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key.Key_Delete:
+            self.deleteSelected()
+        else:
+            super().keyPressEvent(event)
+
+    def deleteSelected(self):
+        for item in self.graphicsScene.selectedItems():
+            if isinstance(item, QDMGraphicsEdge):
+                item.edge.remove()
+            elif hasattr(item, "node"):
+                item.node.remove()
 
     def debug_modifiers(self, event):
         out = "KEYS: "

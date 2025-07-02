@@ -19,7 +19,6 @@ class Edge():
         self.graphicsEdge = QDMGraphicsEdgeDirect(self) if edge_type == EDGE_TYPE_DIRECT else QDMGraphicsEdgeBezier(self)
 
         self.updatePositions()
-        logger.debug(f" Edge: {self.graphicsEdge.posSource} to {self.graphicsEdge.posDestination}")
         self.scene.graphicsScene.addItem(self.graphicsEdge)
         self.scene.addEdge(self)
 
@@ -49,7 +48,15 @@ class Edge():
         self.end_socket = None
 
     def remove(self):
+        logger.debug(f"> Remove Edge {self}")
+        logger.debug(f" - remove edge from all sockets")
         self.remove_from_socket()
+        logger.debug(f" - remove graphicsEdge")
         self.scene.graphicsScene.removeItem(self.graphicsEdge)
         self.graphicsEdge = None
-        self.scene.removeEdge(self)
+        logger.debug(f" - remove edge from scene")
+        try:
+            self.scene.removeEdge(self)
+        except ValueError:
+            pass
+        logger.debug(f" - everythings was done.")

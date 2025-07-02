@@ -32,7 +32,7 @@ if file_handler and not any(isinstance(h, logging.FileHandler) for h in root_log
     root_logger.addHandler(file_handler)
 
 logging.getLogger("node_editor_window.core.edge").setLevel(logging.INFO)
-logging.getLogger("node_editor_window.core.node").setLevel(logging.INFO)
+logging.getLogger("node_editor_window.core.node").setLevel(logging.DEBUG)
 logging.getLogger("node_editor_window.core.scene").setLevel(logging.INFO)
 logging.getLogger("node_editor_window.core.socket").setLevel(logging.INFO)
 logging.getLogger("node_editor_window.graphics.graphics_edge").setLevel(logging.INFO)
