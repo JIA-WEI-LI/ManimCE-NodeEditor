@@ -1,7 +1,11 @@
+import logging
+logger = logging.getLogger(__name__)
+
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QTextEdit
 
 class QDMNodeContentWidget(QWidget):
     def __init__(self, node, parent=None):
+        self.node = node
         super().__init__(parent)
 
         self.initUI()
@@ -13,4 +17,16 @@ class QDMNodeContentWidget(QWidget):
 
         self.widget_label = QLabel("Some Title")
         self.layout.addWidget(self.widget_label)
-        self.layout.addWidget(QTextEdit("Some content here..."))
+        self.layout.addWidget(QDMTextEdit("Some content here..."))
+
+    def setEditingFlag(self, value):
+        self.node.scene.graphicsScene.views()[0].editingFlag = value
+
+class QDMTextEdit(QTextEdit):
+    def focusInEvent(self, event):
+        self.parentWidget().setEditingFlag(True)
+        super().focusInEvent(event)
+    
+    def focusOutEvent(self, event):
+        self.parentWidget().setEditingFlag(False)
+        super().focusOutEvent(event)
