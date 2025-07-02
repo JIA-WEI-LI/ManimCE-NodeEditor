@@ -1,15 +1,18 @@
 import logging
 logger = logging.getLogger(__name__)
+from collections import OrderedDict
 
-from node_editor_window.graphics.graphics_socket import QDMGraphicsSocket
+from ..graphics.graphics_socket import QDMGraphicsSocket
+from ..serialization.serialzable import Serializable
 
 LEFT_TOP = 1
 LEFT_BOTTOM = 2
 RIGHT_TOP = 3 
 RIGHT_BOTTOM = 4
 
-class Socket():
+class Socket(Serializable):
     def __init__(self, node, index:int = 0, position:int = LEFT_TOP, socket_type:int = 1):
+        super().__init__()
 
         self.node = node
         self.index = index
@@ -37,3 +40,14 @@ class Socket():
 
     def hasEdge(self):
         return self.edge is not None
+    
+    def serialize(self):
+        return OrderedDict([
+            ('id', self.id),
+            ('index', self.index),
+            ('position', self.position),
+            ('socket_type', self.socket_type),
+        ])
+    
+    def deserialize(self, data, hashmap={}):
+        return False

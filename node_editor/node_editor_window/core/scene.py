@@ -1,7 +1,14 @@
-from node_editor_window.graphics.graphics_scene import QDMGraphicsScene
+import json
+import logging
+logger = logging.getLogger(__name__)
+from collections import OrderedDict
 
-class Scene:
+from ..graphics.graphics_scene import QDMGraphicsScene
+from ..serialization.serialzable import Serializable
+
+class Scene(Serializable):
     def __init__(self):
+        super().__init__()
         self.nodes = []
         self.edges = []
 
@@ -27,3 +34,30 @@ class Scene:
     def removeEdge(self, edge):
         if edge in self.edges:
             self.edges.remove(edge)
+
+    def saveToFile(self, filename):
+        with open(filename, 'w') as file:
+            file.write(json.dumps(self.serialize(), indent=4))
+        logger.debug(f"saving to {filename} was successful")
+
+    def loadFromFile(self, filename):
+        with open(filename, 'r') as file:
+            raw_data = file.read()
+            data = json.loads(raw_data, encoding='utf-8')
+            self.deserialize(data)
+
+    def serialize(self):
+        nodes, edges = [], []
+        for node in self.nodes: nodes.append(node.serialize())
+        for edge in self.edges: edges.append(edge.serialize())
+        return OrderedDict([
+            ('id', self.id),
+            ('scene_width', self.scene_width),
+            ('scene_height', self.scene_height),
+            ('nodes', nodes),
+            ('edges', edges),
+        ])
+    
+    def deserialize(self, data, hashmap={}):
+        logger.debug(f"deserializating data: {data}")
+        return False

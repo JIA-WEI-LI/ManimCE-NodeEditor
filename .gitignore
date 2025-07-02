@@ -12,3 +12,6 @@ __pycache__/
 
 # Manim generated media
 media/
+
+# Save
+saves/

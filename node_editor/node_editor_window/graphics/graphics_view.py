@@ -1,3 +1,5 @@
+
+import os
 import logging
 logger = logging.getLogger(__name__)
 
@@ -5,10 +7,10 @@ from PyQt5.QtWidgets import QGraphicsView, QApplication
 from PyQt5.QtGui import QPainter, QMouseEvent, QKeyEvent
 from PyQt5.QtCore import Qt, QEvent
 
-from node_editor_window.core.edge import Edge, EDGE_TYPE_BEZIER
-from node_editor_window.graphics.graphics_cutline import QDMCutLine
-from node_editor_window.graphics.graphics_socket import QDMGraphicsSocket
-from node_editor_window.graphics.graphics_edge import QDMGraphicsEdge
+from ..core.edge import Edge, EDGE_TYPE_BEZIER
+from ..graphics.graphics_cutline import QDMCutLine
+from ..graphics.graphics_socket import QDMGraphicsSocket
+from ..graphics.graphics_edge import QDMGraphicsEdge
 
 MODE_NOOP = 1
 MODE_EDGE_DRAG = 2
@@ -212,11 +214,18 @@ class QDMGraphicsView(QGraphicsView):
         super().mouseMoveEvent(event)
 
     def keyPressEvent(self, event: QKeyEvent):
+        save_path = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..", "..", "saves", "graph.json")
+        )
         if event.key() == Qt.Key.Key_Delete:
             if not self.editingFlag:
                 self.deleteSelected()
             else: 
                 super().keyPressEvent(event)
+        elif event.key() == Qt.Key.Key_S and event.modifiers() & Qt.KeyboardModifier.ControlModifier:
+            self.graphicsScene.scene.saveToFile(save_path)
+        elif event.key() == Qt.Key.Key_L and event.modifiers() & Qt.KeyboardModifier.ControlModifier:
+            self.graphicsScene.scene.loadFromFile(save_path)
         else:
             super().keyPressEvent(event)
 

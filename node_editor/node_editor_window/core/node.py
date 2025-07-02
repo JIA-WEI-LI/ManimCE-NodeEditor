@@ -1,13 +1,17 @@
 from typing import List
 import logging
 logger = logging.getLogger(__name__)
+from collections import OrderedDict
 
-from node_editor_window.graphics.graphics_node import QDMGraphicsNode
-from node_editor_window.content.node_content_widget import QDMNodeContentWidget
-from node_editor_window.core.socket import Socket, LEFT_TOP, RIGHT_TOP, LEFT_BOTTOM, RIGHT_BOTTOM
+from .socket import Socket, LEFT_TOP, RIGHT_TOP, LEFT_BOTTOM, RIGHT_BOTTOM
+from ..graphics.graphics_node import QDMGraphicsNode
+from ..content.node_content_widget import QDMNodeContentWidget
+from ..serialization.serialzable import Serializable
 
-class Node():
+class Node(Serializable):
     def __init__(self, scene, title:str = "Undefined Node", inputs:List = [], outputs:List = []):
+        super().__init__()
+        
         self.scene = scene
         self.title = title
 
@@ -77,3 +81,20 @@ class Node():
         logger.debug(f" - remove node from scene")
         self.scene.removeNode(self)
         logger.debug(f" - everythings was done.")
+
+    def serialize(self):
+        inputs, outputs = [], []
+        for socket in self.inputs: inputs.append(socket.serialize())
+        for socket in self.outputs: outputs.append(socket.serialize())
+        return OrderedDict([
+            ('id', self.id),
+            ('title', self.title),
+            ('pos_x', self.graphicsNode.scenePos().x()),
+            ('pos_y', self.graphicsNode.scenePos().y()),
+            ('inputs', inputs),
+            ('outputs', outputs),
+            ('content', self.content.serialize())
+        ])
+    
+    def deserialize(self, data, hashmap={}):
+        return False

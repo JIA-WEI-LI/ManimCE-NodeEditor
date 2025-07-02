@@ -1,16 +1,21 @@
 import logging
 logger = logging.getLogger(__name__)
+from collections import OrderedDict
 
-from node_editor_window.graphics.graphics_edge import QDMGraphicsEdgeDirect, QDMGraphicsEdgeBezier
+from ..graphics.graphics_edge import QDMGraphicsEdgeDirect, QDMGraphicsEdgeBezier
+from ..serialization.serialzable import Serializable
 
 EDGE_TYPE_DIRECT = 1
 EDGE_TYPE_BEZIER = 2
 
-class Edge():
+class Edge(Serializable):
     def __init__(self, scene, start_socket, end_socket, edge_type:int = EDGE_TYPE_BEZIER):
+        super().__init__()
+        
         self.scene = scene
         self.start_socket = start_socket
         self.end_socket = end_socket
+        self.edge_type = edge_type
 
         self.start_socket.edge = self
         if self.end_socket is not None:
@@ -60,3 +65,14 @@ class Edge():
         except ValueError:
             pass
         logger.debug(f" - everythings was done.")
+
+    def serialize(self):
+        return OrderedDict([
+            ('id', self.id),
+            ('edge_type', self.edge_type),
+            ('start', self.start_socket.id),
+            ('end', self.end_socket.id)
+        ])
+    
+    def deserialize(self, data, hashmap={}):
+        return False
