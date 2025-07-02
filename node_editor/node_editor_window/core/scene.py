@@ -47,10 +47,15 @@ class Scene(Serializable):
             self.deserialize(data)
 
     def serialize(self):
+        nodes, edges = [], []
+        for node in self.nodes: nodes.append(node.serialize())
+        for edge in self.edges: edges.append(edge.serialize())
         return OrderedDict([
             ('id', self.id),
             ('scene_width', self.scene_width),
             ('scene_height', self.scene_height),
+            ('nodes', nodes),
+            ('edges', edges),
         ])
     
     def deserialize(self, data, hashmap={}):
