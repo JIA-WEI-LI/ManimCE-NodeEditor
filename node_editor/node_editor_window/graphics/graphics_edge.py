@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QGraphicsPathItem, QGraphicsItem
 from PyQt5.QtGui import QPainter, QPen, QColor, QPainterPath
 from PyQt5.QtCore import Qt, QPointF
 
-from node_editor_window.core.socket import RIGHT_BOTTOM, RIGHT_TOP, LEFT_BOTTOM, LEFT_TOP
+from ..core.socket import RIGHT_BOTTOM, RIGHT_TOP, LEFT_BOTTOM, LEFT_TOP
 
 EDGE_CP_ROUNDNESS = 100
 

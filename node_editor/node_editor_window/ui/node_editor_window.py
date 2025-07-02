@@ -4,10 +4,10 @@ logger = logging.getLogger(__name__)
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QApplication
 from PyQt5.QtCore import QFile
 
-from node_editor_window.core.scene import Scene
-from node_editor_window.core.node import Node
-from node_editor_window.core.edge import Edge, EDGE_TYPE_BEZIER
-from node_editor_window.graphics.graphics_view import QDMGraphicsView
+from ..core.scene import Scene
+from ..core.node import Node
+from ..core.edge import Edge, EDGE_TYPE_BEZIER
+from ..graphics.graphics_view import QDMGraphicsView
 
 class NodeEditorWindow(QWidget):
     def __init__(self, parent = None):

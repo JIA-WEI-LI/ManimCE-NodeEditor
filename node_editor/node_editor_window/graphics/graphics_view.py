@@ -5,10 +5,10 @@ from PyQt5.QtWidgets import QGraphicsView, QApplication
 from PyQt5.QtGui import QPainter, QMouseEvent, QKeyEvent
 from PyQt5.QtCore import Qt, QEvent
 
-from node_editor_window.core.edge import Edge, EDGE_TYPE_BEZIER
-from node_editor_window.graphics.graphics_cutline import QDMCutLine
-from node_editor_window.graphics.graphics_socket import QDMGraphicsSocket
-from node_editor_window.graphics.graphics_edge import QDMGraphicsEdge
+from ..core.edge import Edge, EDGE_TYPE_BEZIER
+from ..graphics.graphics_cutline import QDMCutLine
+from ..graphics.graphics_socket import QDMGraphicsSocket
+from ..graphics.graphics_edge import QDMGraphicsEdge
 
 MODE_NOOP = 1
 MODE_EDGE_DRAG = 2

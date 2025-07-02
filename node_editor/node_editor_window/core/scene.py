@@ -1,4 +1,4 @@
-from node_editor_window.graphics.graphics_scene import QDMGraphicsScene
+from ..graphics.graphics_scene import QDMGraphicsScene
 
 class Scene:
     def __init__(self):

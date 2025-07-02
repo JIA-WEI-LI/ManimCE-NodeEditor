@@ -1,7 +1,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from node_editor_window.graphics.graphics_edge import QDMGraphicsEdgeDirect, QDMGraphicsEdgeBezier
+from ..graphics.graphics_edge import QDMGraphicsEdgeDirect, QDMGraphicsEdgeBezier
 
 EDGE_TYPE_DIRECT = 1
 EDGE_TYPE_BEZIER = 2
