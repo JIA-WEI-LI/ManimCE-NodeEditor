@@ -76,7 +76,7 @@ class Scene(Serializable):
             Node(self).deserialize(node_data, hashmap)
 
         # Create Edge
-        # for edge_data in data['edges']:
-        #     Edge(self).deserialize(edge_data, hashmap)
+        for edge_data in data['edges']:
+            Edge(self).deserialize(edge_data, hashmap)
 
         return True
