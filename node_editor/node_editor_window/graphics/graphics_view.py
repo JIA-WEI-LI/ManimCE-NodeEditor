@@ -226,6 +226,19 @@ class QDMGraphicsView(QGraphicsView):
             self.graphicsScene.scene.saveToFile(save_path)
         elif event.key() == Qt.Key.Key_L and event.modifiers() & Qt.KeyboardModifier.ControlModifier:
             self.graphicsScene.scene.loadFromFile(save_path)
+        elif event.key() == Qt.Key.Key_1:
+            self.graphicsScene.scene.history.storeHistory("Item A")
+        elif event.key() == Qt.Key.Key_2:
+            self.graphicsScene.scene.history.storeHistory("Item B")
+        elif event.key() == Qt.Key.Key_3:
+            self.graphicsScene.scene.history.storeHistory("Item C")
+        elif event.key() == Qt.Key.Key_4:
+            self.graphicsScene.scene.history.undo()
+        elif event.key() == Qt.Key.Key_5:
+            self.graphicsScene.scene.history.redo()
+        elif event.key() == Qt.Key.Key_H:
+            logger.debug(f"HISTORY:    len({len(self.graphicsScene.scene.history.history_stack)}) -- current_step {self.graphicsScene.scene.history.history_current_step}")
+            logger.debug(f"{self.graphicsScene.scene.history.history_stack}")
         else:
             super().keyPressEvent(event)
 
