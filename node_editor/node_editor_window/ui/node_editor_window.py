@@ -4,6 +4,7 @@ logger = logging.getLogger(__name__)
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QApplication
 from PyQt5.QtCore import QFile
 
+from .. import __version__
 from ..core.scene import Scene
 from ..core.node import Node
 from ..core.edge import Edge, EDGE_TYPE_BEZIER
@@ -36,7 +37,7 @@ class NodeEditorWindow(QWidget):
         self.view.setScene(self.graphicsScene)
         self.layout.addWidget(self.view)
 
-        self.setWindowTitle("Node Editor")
+        self.setWindowTitle(f"Node Editor v{__version__}")
         self.show()
 
     def addNodes(self):

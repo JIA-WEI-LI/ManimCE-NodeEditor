@@ -13,7 +13,7 @@ from node_editor_window.ui.node_editor_window import NodeEditorWindow
 def main():
     app = QApplication(sys.argv + ['-platform', 'windows:darkmode=1'])
     window = NodeEditorWindow() 
-
+    
     sys.exit(app.exec_())
 
 if __name__ == '__main__':
