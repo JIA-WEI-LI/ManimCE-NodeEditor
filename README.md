@@ -76,6 +76,9 @@ Official tutorial website is under development and will provide:
 ## 🔻 Roadmap & Tags
 *  `v0.1.0` ：  🎯 Basic node editing complete
 *  `v0.2.0` ：  🔁 Advanced logic, edge types, and serialization
+  
+### 📦 Current Version
+**`v0.2.0.dev6`** – Under active development  
 
 ## 📄 License
 [MIT License](./LICENSE)
