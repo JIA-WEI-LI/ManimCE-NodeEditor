@@ -1,4 +1,3 @@
-
 import os
 import logging
 logger = logging.getLogger(__name__)
@@ -177,6 +176,9 @@ class QDMGraphicsView(QGraphicsView):
             QApplication.setOverrideCursor(Qt.CursorShape.ArrowCursor)
             self.mode = MODE_NOOP
             return 
+        
+        if self.dragMode() == QGraphicsView.rubberBandChanged:
+            self.graphicsScene.scene.history.storeHistory("Selection changed")
 
         super().mouseReleaseEvent(event)
 
@@ -226,19 +228,16 @@ class QDMGraphicsView(QGraphicsView):
             self.graphicsScene.scene.saveToFile(save_path)
         elif event.key() == Qt.Key.Key_L and event.modifiers() & Qt.KeyboardModifier.ControlModifier:
             self.graphicsScene.scene.loadFromFile(save_path)
-        elif event.key() == Qt.Key.Key_1:
-            self.graphicsScene.scene.history.storeHistory("Item A")
-        elif event.key() == Qt.Key.Key_2:
-            self.graphicsScene.scene.history.storeHistory("Item B")
-        elif event.key() == Qt.Key.Key_3:
-            self.graphicsScene.scene.history.storeHistory("Item C")
-        elif event.key() == Qt.Key.Key_4:
+        elif event.key() == Qt.Key.Key_Z and event.modifiers() & Qt.KeyboardModifier.ControlModifier and not event.modifiers() & Qt.KeyboardModifier.ShiftModifier:
             self.graphicsScene.scene.history.undo()
-        elif event.key() == Qt.Key.Key_5:
+        elif event.key() == Qt.Key.Key_Z and event.modifiers() & Qt.KeyboardModifier.ControlModifier and event.modifiers() & Qt.KeyboardModifier.ShiftModifier:
             self.graphicsScene.scene.history.redo()
         elif event.key() == Qt.Key.Key_H:
             logger.debug(f"HISTORY:    len({len(self.graphicsScene.scene.history.history_stack)}) -- current_step {self.graphicsScene.scene.history.history_current_step}")
-            logger.debug(f"{self.graphicsScene.scene.history.history_stack}")
+            ix = 0
+            for item in self.graphicsScene.scene.history.history_stack:
+                logger.debug(f"# {ix} -- {item['desc']}")
+                ix += 1
         else:
             super().keyPressEvent(event)
 
@@ -251,12 +250,16 @@ class QDMGraphicsView(QGraphicsView):
                 if edge.graphicsEdge.intersectsWith(p1, p2):
                     edge.remove()
 
+        self.graphicsScene.scene.history.storeHistory("Delete cutted edges")
+
     def deleteSelected(self):
         for item in self.graphicsScene.selectedItems():
             if isinstance(item, QDMGraphicsEdge):
                 item.edge.remove()
             elif hasattr(item, "node"):
                 item.node.remove()
+
+        self.graphicsScene.scene.history.storeHistory("Delete selected")
 
     def debug_modifiers(self, event):
         out = "KEYS: "
@@ -297,6 +300,8 @@ class QDMGraphicsView(QGraphicsView):
                 self.dragEdge.end_socket.setConnectedEdge(self.dragEdge)
                 logger.debug(f"    reassigned start and end sockets to drag edge")
                 self.dragEdge.updatePositions()
+                # store history
+                self.graphicsScene.scene.history.storeHistory("Create new edge by dragging")
                 return True
         
         logger.debug("End dragging edge")
