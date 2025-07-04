@@ -5,7 +5,6 @@ from collections import OrderedDict
 
 from .node import Node
 from .edge import Edge
-from .scene_history import SceneHistory
 from ..graphics.graphics_scene import QDMGraphicsScene
 from ..serialization.serialzable import Serializable
 
@@ -19,7 +18,6 @@ class Scene(Serializable):
         self.scene_height = 64000
 
         self.initUI()
-        self.history = SceneHistory(self)
 
     def initUI(self):
         self.graphicsScene = QDMGraphicsScene(self)
