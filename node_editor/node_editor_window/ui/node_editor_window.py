@@ -23,20 +23,20 @@ class NodeEditorWindow(QMainWindow):
         menubar = self.menuBar()
 
         # initialize menu
-        fileMenu = menubar.addMenu('&File')
-        fileMenu.addAction(self.createAct('&New', 'Ctrl+N', "Create new graph", self.onFileNew))
+        fileMenu = menubar.addMenu(self.tr('&File'))
+        fileMenu.addAction(self.createAct(self.tr('&New'), 'Ctrl+N', self.tr("Create new graph"), self.onFileNew))
         fileMenu.addSeparator()
-        fileMenu.addAction(self.createAct('&Open', 'Ctrl+O', "Open file", self.onFileOpen))
-        fileMenu.addAction(self.createAct('&Save', 'Ctrl+S', "Save file", self.onFileSave))
-        fileMenu.addAction(self.createAct('Save &As', 'Ctrl+Shift+S', "Save as new file", self.onFileSaveAs))
+        fileMenu.addAction(self.createAct(self.tr('&Open'), 'Ctrl+O', self.tr("Open file"), self.onFileOpen))
+        fileMenu.addAction(self.createAct(self.tr('&Save'), 'Ctrl+S', self.tr("Save file"), self.onFileSave))
+        fileMenu.addAction(self.createAct(self.tr('Save &As'), 'Ctrl+Shift+S', self.tr("Save as new file"), self.onFileSaveAs))
         fileMenu.addSeparator()
-        fileMenu.addAction(self.createAct('&Exit', 'Ctrl+Q', "Exit application", self.close))
+        fileMenu.addAction(self.createAct(self.tr('&Exit'), 'Ctrl+Q', self.tr("Exit application"), self.close))
 
-        editMenu = menubar.addMenu('&Edit')
-        editMenu.addAction(self.createAct('&Undo', 'Ctrl+Z', "Undo last operation", self.onEditUndo))
-        editMenu.addAction(self.createAct('&Redo', 'Ctrl+Shift+Z', "Redo last operation", self.onEditRedo))
+        editMenu = menubar.addMenu(self.tr('&Edit'))
+        editMenu.addAction(self.createAct(self.tr('&Undo'), 'Ctrl+Z', self.tr("Undo last operation"), self.onEditUndo))
+        editMenu.addAction(self.createAct(self.tr('&Redo'), 'Ctrl+Shift+Z', self.tr("Redo last operation"), self.onEditRedo))
         fileMenu.addSeparator()
-        editMenu.addAction(self.createAct('&Delet', 'Del', "Delete selected items", self.onEditDelete))
+        editMenu.addAction(self.createAct(self.tr('&Delet'), 'Del', self.tr("Delete selected items"), self.onEditDelete))
 
         node_editor_widget = NodeEditorWidget(self)
         self.setCentralWidget(node_editor_widget)
@@ -53,13 +53,13 @@ class NodeEditorWindow(QMainWindow):
         self.show()
 
     def onScenePosChanged(self, x:int, y:int):
-        self.status_mouse_pos.setText("Scene Pos: { %d , %d }" % (x, y))
+        self.status_mouse_pos.setText(self.tr("Scene Pos:") + "{ %d , %d }" % (x, y))
 
     def onFileNew(self):
         self.centralWidget().scene.clear()
 
     def onFileOpen(self):
-        fname, filter = QFileDialog.getOpenFileName(self, "Open graph from file")
+        fname, filter = QFileDialog.getOpenFileName(self, self.tr("Open graph from file"))
         if fname == '': return
         if os.path.isfile(fname):
             self.centralWidget().scene.loadFromFile(fname)
@@ -67,10 +67,10 @@ class NodeEditorWindow(QMainWindow):
     def onFileSave(self):
         if self.filename == None: return self.onFileSaveAs()
         self.centralWidget().scene.saveToFile(self.filename)
-        self.statusBar().showMessage("Successfully saved %s" % self.filename)
+        self.statusBar().showMessage(self.tr("Successfully saved") + " %s" % self.filename)
 
     def onFileSaveAs(self):
-        fname, filter = QFileDialog.getSaveFileName(self, "Save graph to file")
+        fname, filter = QFileDialog.getSaveFileName(self, self.tr("Save graph to file"))
         if fname == '': return
         self.filename = fname
         self.onFileSave()
