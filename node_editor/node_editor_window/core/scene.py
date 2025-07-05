@@ -6,6 +6,7 @@ from collections import OrderedDict
 from .node import Node
 from .edge import Edge
 from .scene_history import SceneHistory
+from .scene_clipboard import SceneClipboard
 from ..graphics.graphics_scene import QDMGraphicsScene
 from ..serialization.serialzable import Serializable
 
@@ -20,6 +21,7 @@ class Scene(Serializable):
 
         self.initUI()
         self.history = SceneHistory(self)
+        self.clipboard = SceneClipboard(self)
 
     def initUI(self):
         self.graphicsScene = QDMGraphicsScene(self)
@@ -66,12 +68,12 @@ class Scene(Serializable):
             ('edges', edges),
         ])
     
-    def deserialize(self, data, hashmap={}):
+    def deserialize(self, data, hashmap={}, restore_id:bool = True):
         logger.debug(f"deserializating data: {data}")
         self.clear()
         hashmap= {}
 
-        self.id = data['id']
+        if restore_id: self.id = data['id']
 
         # Create Node
         for node_data in data['nodes']:
