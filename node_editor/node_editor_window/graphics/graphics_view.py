@@ -4,7 +4,7 @@ logger = logging.getLogger(__name__)
 
 from PyQt5.QtWidgets import QGraphicsView, QApplication
 from PyQt5.QtGui import QPainter, QMouseEvent, QKeyEvent
-from PyQt5.QtCore import Qt, QEvent
+from PyQt5.QtCore import Qt, QEvent, pyqtSignal
 
 from ..core.edge import Edge, EDGE_TYPE_BEZIER
 from ..graphics.graphics_cutline import QDMCutLine
@@ -18,6 +18,8 @@ MODE_EDGE_CUT = 3
 EDGE_DRAG_START_THRESHOLD = 10
 
 class QDMGraphicsView(QGraphicsView):
+    scenePosChanged = pyqtSignal(int, int)
+
     def __init__(self, graphicsScene, parent=None):
         super().__init__(parent=parent)
 
@@ -213,33 +215,39 @@ class QDMGraphicsView(QGraphicsView):
             self.cutline.line_points.append(pos)
             self.cutline.update()
 
+        self.last_scene_mouse_pos = self.mapToScene(event.pos())
+        self.scenePosChanged.emit(
+            int(self.last_scene_mouse_pos.x()),
+            int(self.last_scene_mouse_pos.y())
+        )
+
         super().mouseMoveEvent(event)
 
     def keyPressEvent(self, event: QKeyEvent):
-        save_path = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "..", "..", "saves", "graph.json")
-        )
-        if event.key() == Qt.Key.Key_Delete:
-            if not self.editingFlag:
-                self.deleteSelected()
-            else: 
-                super().keyPressEvent(event)
-        elif event.key() == Qt.Key.Key_S and event.modifiers() & Qt.KeyboardModifier.ControlModifier:
-            self.graphicsScene.scene.saveToFile(save_path)
-        elif event.key() == Qt.Key.Key_L and event.modifiers() & Qt.KeyboardModifier.ControlModifier:
-            self.graphicsScene.scene.loadFromFile(save_path)
-        elif event.key() == Qt.Key.Key_Z and event.modifiers() & Qt.KeyboardModifier.ControlModifier and not event.modifiers() & Qt.KeyboardModifier.ShiftModifier:
-            self.graphicsScene.scene.history.undo()
-        elif event.key() == Qt.Key.Key_Z and event.modifiers() & Qt.KeyboardModifier.ControlModifier and event.modifiers() & Qt.KeyboardModifier.ShiftModifier:
-            self.graphicsScene.scene.history.redo()
-        elif event.key() == Qt.Key.Key_H:
-            logger.debug(f"HISTORY:    len({len(self.graphicsScene.scene.history.history_stack)}) -- current_step {self.graphicsScene.scene.history.history_current_step}")
-            ix = 0
-            for item in self.graphicsScene.scene.history.history_stack:
-                logger.debug(f"# {ix} -- {item['desc']}")
-                ix += 1
-        else:
-            super().keyPressEvent(event)
+        # save_path = os.path.abspath(
+        #     os.path.join(os.path.dirname(__file__), "..", "..", "saves", "graph.json")
+        # )
+        # if event.key() == Qt.Key.Key_Delete:
+        #     if not self.editingFlag:
+        #         self.deleteSelected()
+        #     else: 
+        #         super().keyPressEvent(event)
+        # elif event.key() == Qt.Key.Key_S and event.modifiers() & Qt.KeyboardModifier.ControlModifier:
+            # self.graphicsScene.scene.saveToFile(save_path)
+        # elif event.key() == Qt.Key.Key_L and event.modifiers() & Qt.KeyboardModifier.ControlModifier:
+            # self.graphicsScene.scene.loadFromFile(save_path)
+        # elif event.key() == Qt.Key.Key_Z and event.modifiers() & Qt.KeyboardModifier.ControlModifier and not event.modifiers() & Qt.KeyboardModifier.ShiftModifier:
+        #     self.graphicsScene.scene.history.undo()
+        # elif event.key() == Qt.Key.Key_Z and event.modifiers() & Qt.KeyboardModifier.ControlModifier and event.modifiers() & Qt.KeyboardModifier.ShiftModifier:
+        #     self.graphicsScene.scene.history.redo()
+        # elif event.key() == Qt.Key.Key_H:
+        #     logger.debug(f"HISTORY:    len({len(self.graphicsScene.scene.history.history_stack)}) -- current_step {self.graphicsScene.scene.history.history_current_step}")
+        #     ix = 0
+        #     for item in self.graphicsScene.scene.history.history_stack:
+        #         logger.debug(f"# {ix} -- {item['desc']}")
+        #         ix += 1
+        # else:
+        super().keyPressEvent(event)
 
     def cutIntersectingEdges(self, event):
         for ix in range(len(self.cutline.line_points) - 1):
