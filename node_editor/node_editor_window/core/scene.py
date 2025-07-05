@@ -68,10 +68,10 @@ class Scene(Serializable):
     
     def deserialize(self, data, hashmap={}):
         logger.debug(f"deserializating data: {data}")
-
         self.clear()
-
         hashmap= {}
+
+        self.id = data['id']
 
         # Create Node
         for node_data in data['nodes']:
