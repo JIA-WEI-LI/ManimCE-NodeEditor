@@ -1,59 +1,85 @@
-import logging
-logger = logging.getLogger(__name__)
-
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QApplication
-from PyQt5.QtCore import QFile
+import os
+from PyQt5.QtWidgets import QMainWindow, QAction, QFileDialog, QLabel
 
 from .. import __version__
-from ..core.scene import Scene
-from ..core.node import Node
-from ..core.edge import Edge, EDGE_TYPE_BEZIER
-from ..graphics.graphics_view import QDMGraphicsView
+from .node_editor_widget import NodeEditorWidget
 
-class NodeEditorWindow(QWidget):
-    def __init__(self, parent = None):
-        super().__init__(parent)
-
-        self.stylesheet_filename = "node_editor/node_editor_window/qss/nodestyle.qss"
-        self.loadStylesheet(self.stylesheet_filename)
+class NodeEditorWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
 
         self.initUI()
 
+        self.filename = None
+
+    def createAct(self, name:str, shortcut:str, tooltip:str, callback):
+        act = QAction(name, self)
+        act.setShortcut(shortcut)
+        act.setToolTip(tooltip)
+        act.triggered.connect(callback)
+        return act
+
     def initUI(self):
+        menubar = self.menuBar()
+
+        # initialize menu
+        fileMenu = menubar.addMenu('&File')
+        fileMenu.addAction(self.createAct('&New', 'Ctrl+N', "Create new graph", self.onFileNew))
+        fileMenu.addSeparator()
+        fileMenu.addAction(self.createAct('&Open', 'Ctrl+O', "Open file", self.onFileOpen))
+        fileMenu.addAction(self.createAct('&Save', 'Ctrl+S', "Save file", self.onFileSave))
+        fileMenu.addAction(self.createAct('Save &As', 'Ctrl+Shift+S', "Save as new file", self.onFileSaveAs))
+        fileMenu.addSeparator()
+        fileMenu.addAction(self.createAct('&Exit', 'Ctrl+Q', "Exit application", self.close))
+
+        editMenu = menubar.addMenu('&Edit')
+        editMenu.addAction(self.createAct('&Undo', 'Ctrl+Z', "Undo last operation", self.onEditUndo))
+        editMenu.addAction(self.createAct('&Redo', 'Ctrl+Shift+Z', "Redo last operation", self.onEditRedo))
+        fileMenu.addSeparator()
+        editMenu.addAction(self.createAct('&Delet', 'Del', "Delete selected items", self.onEditDelete))
+
+        node_editor_widget = NodeEditorWidget(self)
+        self.setCentralWidget(node_editor_widget)
+
+        # status bar
+        self.statusBar().showMessage("")
+        self.status_mouse_pos = QLabel("")
+        self.statusBar().addPermanentWidget(self.status_mouse_pos)
+        node_editor_widget.view.scenePosChanged.connect(self.onScenePosChanged)
+
+        # set window properties
         self.setGeometry(200,200,800,600)
-
-        self.layout = QVBoxLayout()
-        self.layout.setContentsMargins(0, 0, 0, 0)
-        self.setLayout(self.layout)
-
-        # Create graphics scene
-        self.scene = Scene()
-        self.graphicsScene = self.scene.graphicsScene
-
-        self.addNodes()
-
-        # Create graphics view
-        self.view = QDMGraphicsView(self.scene.graphicsScene, self)
-        self.view.setScene(self.graphicsScene)
-        self.layout.addWidget(self.view)
-
-        self.setWindowTitle(f"Node Editor v{__version__}")
+        self.setWindowTitle(f"Node Editor v {__version__}")
         self.show()
 
-    def addNodes(self):
-        node_1 = Node(self.scene, "My Node 1", inputs=[0, 2, 3], outputs=[1])
-        node_2 = Node(self.scene, "My Node 2", inputs=[0, 4, 5], outputs=[1])
-        node_3 = Node(self.scene, "My Node 3", inputs=[0, 0, 2], outputs=[1])
-        node_1.setPos(-350, -250)
-        node_2.setPos(-75, 0)
-        node_3.setPos(200, -150)
+    def onScenePosChanged(self, x:int, y:int):
+        self.status_mouse_pos.setText("Scene Pos: { %d , %d }" % (x, y))
 
-        edge_1 = Edge(self.scene, node_1.outputs[0], node_2.inputs[0], edge_type=EDGE_TYPE_BEZIER)
-        edge_2 = Edge(self.scene, node_2.outputs[0], node_3.inputs[0], edge_type=EDGE_TYPE_BEZIER)
+    def onFileNew(self):
+        self.centralWidget().scene.clear()
 
-    def loadStylesheet(self, filename):
-        logger.info(f"Loading stylesheet from {filename}")
-        file = QFile(filename)
-        file.open(QFile.OpenModeFlag.ReadOnly | QFile.OpenModeFlag.Text)
-        stylesheet = file.readAll()
-        QApplication.instance().setStyleSheet(str(stylesheet, encoding='utf-8'))
+    def onFileOpen(self):
+        fname, filter = QFileDialog.getOpenFileName(self, "Open graph from file")
+        if fname == '': return
+        if os.path.isfile(fname):
+            self.centralWidget().scene.loadFromFile(fname)
+
+    def onFileSave(self):
+        if self.filename == None: return self.onFileSaveAs()
+        self.centralWidget().scene.saveToFile(self.filename)
+        self.statusBar().showMessage("Successfully saved %s" % self.filename)
+
+    def onFileSaveAs(self):
+        fname, filter = QFileDialog.getSaveFileName(self, "Save graph to file")
+        if fname == '': return
+        self.filename = fname
+        self.onFileSave()
+
+    def onEditUndo(self):
+        self.centralWidget().scene.history.undo()
+
+    def onEditRedo(self):
+        self.centralWidget().scene.history.redo()
+
+    def onEditDelete(self):
+        self.centralWidget().scene.graphicsScene.views()[0].deleteSelected()

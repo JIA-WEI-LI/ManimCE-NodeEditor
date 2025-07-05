@@ -8,11 +8,11 @@ if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 import utils.logger
 
-from node_editor.node_editor_window.ui.node_editor_widget import NodeEditorWidget
+from node_editor.node_editor_window.ui.node_editor_window import NodeEditorWindow
 
 def main():
     app = QApplication(sys.argv + ['-platform', 'windows:darkmode=1'])
-    window = NodeEditorWidget() 
+    window = NodeEditorWindow() 
     
     sys.exit(app.exec_())
 
