@@ -1,5 +1,9 @@
 import os
-from PyQt5.QtWidgets import QMainWindow, QAction, QFileDialog, QLabel
+import json
+import logging
+logger = logging.getLogger(__name__)
+
+from PyQt5.QtWidgets import QMainWindow, QAction, QFileDialog, QLabel, QApplication
 
 from .. import __version__
 from .node_editor_widget import NodeEditorWidget
@@ -11,6 +15,12 @@ class NodeEditorWindow(QMainWindow):
         self.initUI()
 
         self.filename = None
+
+        QApplication.instance().clipboard().dataChanged.connect(self.onClipboardChanged)
+
+    def onClipboardChanged(self):
+        clip = QApplication.instance().clipboard()
+        logger.debug("Clipboard changed: "+ clip.text())
 
     def createAct(self, name:str, shortcut:str, tooltip:str, callback):
         act = QAction(name, self)
@@ -35,6 +45,10 @@ class NodeEditorWindow(QMainWindow):
         editMenu = menubar.addMenu(self.tr('&Edit'))
         editMenu.addAction(self.createAct(self.tr('&Undo'), 'Ctrl+Z', self.tr("Undo last operation"), self.onEditUndo))
         editMenu.addAction(self.createAct(self.tr('&Redo'), 'Ctrl+Shift+Z', self.tr("Redo last operation"), self.onEditRedo))
+        fileMenu.addSeparator()
+        editMenu.addAction(self.createAct(self.tr('Cut'), 'Ctrl+X', self.tr("Cut to Clipboard"), self.onEditCut))
+        editMenu.addAction(self.createAct(self.tr('&Copy'), 'Ctrl+C', self.tr("Copy to Clipboard"), self.onEditCopy))
+        editMenu.addAction(self.createAct(self.tr('&Paste'), 'Ctrl+V', self.tr("Paste from Clipboard"), self.onEditPaste))
         fileMenu.addSeparator()
         editMenu.addAction(self.createAct(self.tr('&Delet'), 'Del', self.tr("Delete selected items"), self.onEditDelete))
 
@@ -83,3 +97,29 @@ class NodeEditorWindow(QMainWindow):
 
     def onEditDelete(self):
         self.centralWidget().scene.graphicsScene.views()[0].deleteSelected()
+
+    def onEditCut(self):
+        data = self.centralWidget().scene.clipboard.serializeSelected(delete=True)
+        str_data = json.dumps(data, indent=4)
+        QApplication.instance().clipboard().setText(str_data)
+
+    def onEditCopy(self):
+        data = self.centralWidget().scene.clipboard.serializeSelected(delete=False)
+        str_data = json.dumps(data, indent=4)
+        QApplication.instance().clipboard().setText(str_data)
+
+    def onEditPaste(self):
+        raw_data = QApplication.instance().clearboard().text()
+
+        try:
+            data = json.loads(raw_data)
+        except ValueError as e:
+            logger.error("Pasting of not valid json data! " + e)
+            return
+        
+        # Check if the json data are correct
+        if 'nodes' not in data:
+            logger.warning("JSON does not contain any nodes!")
+            return
+        
+        self.centralWidget().scene.clipboard.deserializeFromClipboard(data)
