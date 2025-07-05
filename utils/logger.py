@@ -42,4 +42,5 @@ logging.getLogger("node_editor.node_editor_window.graphics.graphics_node").setLe
 logging.getLogger("node_editor.node_editor_window.graphics.graphics_scene").setLevel(logging.INFO)
 logging.getLogger("node_editor.node_editor_window.graphics.graphics_socket").setLevel(logging.INFO)
 logging.getLogger("node_editor.node_editor_window.graphics.graphics_view").setLevel(logging.INFO)
-logging.getLogger("node_editor.node_editor_window.ui.node_editor_window").setLevel(logging.INFO)
+logging.getLogger("node_editor.node_editor_window.ui.node_editor_widget").setLevel(logging.INFO)
+logging.getLogger("node_editor.node_editor_window.ui.node_editor_window").setLevel(logging.DEBUG)

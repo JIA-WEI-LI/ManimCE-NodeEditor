@@ -1,5 +1,8 @@
 import os
-from PyQt5.QtWidgets import QMainWindow, QAction, QFileDialog, QLabel
+import logging
+logger = logging.getLogger(__name__)
+
+from PyQt5.QtWidgets import QMainWindow, QAction, QFileDialog, QLabel, QApplication
 
 from .. import __version__
 from .node_editor_widget import NodeEditorWidget
@@ -11,6 +14,12 @@ class NodeEditorWindow(QMainWindow):
         self.initUI()
 
         self.filename = None
+
+        QApplication.instance().clipboard().dataChanged.connect(self.onClipboardChanged)
+
+    def onClipboardChanged(self):
+        clip = QApplication.instance().clipboard()
+        logger.debug("Clipboard changed: "+ clip.text())
 
     def createAct(self, name:str, shortcut:str, tooltip:str, callback):
         act = QAction(name, self)
