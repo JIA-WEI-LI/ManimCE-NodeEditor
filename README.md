@@ -78,7 +78,7 @@ Official tutorial website is under development and will provide:
 *  `v0.2.0` ：  🔁 Advanced logic, edge types, and serialization
   
 ### 📦 Current Version
-**`v0.2.0.dev8`** – Under active development  
+**`v0.2.0.dev9`** – Under active development  
 
 ## 📄 License
 [MIT License](./LICENSE)
