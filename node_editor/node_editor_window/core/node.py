@@ -45,7 +45,7 @@ class Node(Serializable):
 
     @property
     def pos(self):
-        return self.graphicsNode.setPos()       # QPonintF
+        return self.graphicsNode.pos()       # QPonintF
     def setPos(self, x: int, y: int):
         self.graphicsNode.setPos(x, y)
 
@@ -122,7 +122,7 @@ class Node(Serializable):
                 position=socket_data['position'],
                 socket_type=socket_data['socket_type']
             )
-            new_socket.deserialize(socket_data, restore_id)
+            new_socket.deserialize(socket_data, hashmap, restore_id)
             self.inputs.append(new_socket)
 
         self.outputs = []
