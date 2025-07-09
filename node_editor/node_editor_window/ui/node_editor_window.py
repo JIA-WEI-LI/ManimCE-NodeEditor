@@ -106,10 +106,11 @@ class NodeEditorWindow(QMainWindow):
     def onEditCopy(self):
         data = self.centralWidget().scene.clipboard.serializeSelected(delete=False)
         str_data = json.dumps(data, indent=4)
+        logger.debug(str_data)
         QApplication.instance().clipboard().setText(str_data)
 
     def onEditPaste(self):
-        raw_data = QApplication.instance().clearboard().text()
+        raw_data = QApplication.instance().clipboard().text()
 
         try:
             data = json.loads(raw_data)

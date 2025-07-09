@@ -122,7 +122,7 @@ class Node(Serializable):
                 position=socket_data['position'],
                 socket_type=socket_data['socket_type']
             )
-            new_socket.deserialize(socket_data, restore_id)
+            new_socket.deserialize(socket_data, hashmap, restore_id)
             self.inputs.append(new_socket)
 
         self.outputs = []
