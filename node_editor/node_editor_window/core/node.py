@@ -45,7 +45,7 @@ class Node(Serializable):
 
     @property
     def pos(self):
-        return self.graphicsNode.setPos()       # QPonintF
+        return self.graphicsNode.pos()       # QPonintF
     def setPos(self, x: int, y: int):
         self.graphicsNode.setPos(x, y)
 
