@@ -10,6 +10,9 @@ __pycache__/
 # VSCode
 .vscode/
 
+# Git
+.git/
+
 # Manim generated media
 media/
 
