@@ -56,7 +56,7 @@ class SceneClipboard():
         # if CUT(aka deleted) remove selected items
         if delete:
             self.scene.graphicsScene.views()[0].deleteSelected()
-            self.scene.history.storeHistory("Cut out elements from scene")
+            self.scene.history.storeHistory("Cut out elements from scene", setModified=True)
 
         return data
     
@@ -99,8 +99,5 @@ class SceneClipboard():
                 new_edge = Edge(self.scene)
                 new_edge.deserialize(edge_data, hashmap, restore_id=False)
 
-        # create each sockets
-
         # store history
-
-        logger.debug("deserialization from clipboard, data:\n%s", pformat(data))
+        self.scene.history.storeHistory("Pasted elements in scene", setModified=True)
