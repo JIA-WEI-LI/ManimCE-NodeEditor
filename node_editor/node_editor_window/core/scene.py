@@ -18,6 +18,8 @@ class Scene(Serializable):
 
         self.scene_width = 64000
         self.scene_height = 64000
+        
+        self.has_been_modified = True
 
         self.initUI()
         self.history = SceneHistory(self)
