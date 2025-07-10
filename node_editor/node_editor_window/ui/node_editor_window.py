@@ -12,9 +12,8 @@ class NodeEditorWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.initUI()
-
         self.filename = None
+        self.initUI()
 
         QApplication.instance().clipboard().dataChanged.connect(self.onClipboardChanged)
 
@@ -53,6 +52,7 @@ class NodeEditorWindow(QMainWindow):
         editMenu.addAction(self.createAct(self.tr('&Delet'), 'Del', self.tr("Delete selected items"), self.onEditDelete))
 
         node_editor_widget = NodeEditorWidget(self)
+        node_editor_widget.scene.addHasBeenModifiedListener(self.changeTitle)
         self.setCentralWidget(node_editor_widget)
 
         # status bar
@@ -63,8 +63,20 @@ class NodeEditorWindow(QMainWindow):
 
         # set window properties
         self.setGeometry(200,200,800,600)
-        self.setWindowTitle(f"Node Editor v {__version__}")
+        self.changeTitle()
         self.show()
+
+    def changeTitle(self):
+        title = f"Node Editor v{__version__} - "
+        if self.filename == None:
+            title += "New"
+        else:
+            title += os.path.basename(self.filename)
+
+        if self.centralWidget().scene.has_been_modified:
+            title += "*"
+
+        self.setWindowTitle(title)
 
     def closeEvent(self, event):
         if self.maybeSave():
@@ -100,13 +112,16 @@ class NodeEditorWindow(QMainWindow):
         if self.maybeSave():
             self.centralWidget().scene.clear()
             self.filename = None
+            self.changeTitle()
 
     def onFileOpen(self):
-        fname, filter = QFileDialog.getOpenFileName(self, self.tr("Open graph from file"))
-        if fname == '': return
-        if os.path.isfile(fname):
-            self.centralWidget().scene.loadFromFile(fname)
-            self.filename = fname
+        if self.maybeSave():
+            fname, filter = QFileDialog.getOpenFileName(self, self.tr("Open graph from file"))
+            if fname == '': return
+            if os.path.isfile(fname):
+                self.centralWidget().scene.loadFromFile(fname)
+                self.filename = fname
+                self.changeTitle()
 
     def onFileSave(self):
         if self.filename == None: return self.onFileSaveAs()

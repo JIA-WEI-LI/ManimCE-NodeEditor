@@ -18,12 +18,30 @@ class Scene(Serializable):
 
         self.scene_width = 64000
         self.scene_height = 64000
-        
-        self.has_been_modified = True
+
+        self._has_been_modified = False
+        self._has_been_modified_listeners = []
 
         self.initUI()
         self.history = SceneHistory(self)
         self.clipboard = SceneClipboard(self)
+
+    @property
+    def has_been_modified(self):
+        return self._has_been_modified
+    @has_been_modified.setter
+    def has_been_modified(self, value):
+        if not self._has_been_modified and value:
+            self._has_been_modified = value
+
+            # call all registered listeners
+            for callback in self._has_been_modified_listeners:
+                callback()
+
+        self._has_been_modified = value
+
+    def addHasBeenModifiedListener(self, callback):
+        self._has_been_modified_listeners.append(callback)
 
     def initUI(self):
         self.graphicsScene = QDMGraphicsScene(self)
@@ -47,16 +65,22 @@ class Scene(Serializable):
         while len(self.nodes) > 0:
             self.nodes[0].remove()
 
+        self.has_been_modified = False
+
     def saveToFile(self, filename):
         with open(filename, 'w') as file:
             file.write(json.dumps(self.serialize(), indent=4))
-        logger.debug(f"saving to {filename} was successful")
+            logger.debug(f"saving to {filename} was successful")
+
+            self.has_been_modified = False
 
     def loadFromFile(self, filename):
         with open(filename, 'r', encoding='utf-8') as file:
             raw_data = file.read()
             data = json.loads(raw_data)
             self.deserialize(data)
+
+            self.has_been_modified = False
 
     def serialize(self):
         nodes, edges = [], []
