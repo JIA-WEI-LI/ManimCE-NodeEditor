@@ -1,4 +1,5 @@
 import os
+import pprint
 import logging
 logger = logging.getLogger(__name__)
 
@@ -193,7 +194,7 @@ class QDMGraphicsView(QGraphicsView):
 
         item = self.getItemAtClick(event)
         if isinstance(item, QDMGraphicsEdge): logger.debug(f"RBM DEBUG: {item.edge} connecting sockets: {item.edge.start_socket} <--> {item.edge.end_socket}")
-        if isinstance(item, QDMGraphicsSocket): logger.debug(f"RBM DEBUG: {item.socket} has edge {item.socket.edge}")
+        if isinstance(item, QDMGraphicsSocket): logger.debug(f"RBM DEBUG: {item.socket} has edge:\n    {pprint.pformat(item.socket.edges)}")
 
         if item is None:
             logger.debug(f"SCENE: {self.graphicsScene}")
@@ -308,8 +309,14 @@ class QDMGraphicsView(QGraphicsView):
                 # if item.socket.hasEdge():
                 #     item.socket.edge.remove()
 
-                for edge in item.socket.edges:
-                    edge.remove()
+                # for edge in item.socket.edges:
+                #     edge.remove()
+
+                if not item.socket.is_multi_edges:
+                    item.socket.removeAllEdges()
+
+                if not self.drag_start_socket.is_multi_edges:
+                    self.drag_start_socket.removeAllEdges()
 
                 # logger.debug(f"    assign End Socket to: {item.socket}")
                 # if self.previousEdge is not None: self.previousEdge.remove()

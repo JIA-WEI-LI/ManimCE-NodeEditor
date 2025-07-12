@@ -28,7 +28,7 @@ class Socket(Serializable):
         self.edges = []
 
     def __str__(self):
-        return "< Socket %s ... %s >" % (hex(id(self))[2:5], hex(id(self))[-3:])
+        return "< Socket %s %s ... %s >" % ("ME" if self.is_multi_edges else "SE", hex(id(self))[2:5], hex(id(self))[-3:])
 
     def getSocketPosition(self):
         logger.debug(f"Get socket position: {self.index} {self.position} for node {self.node}")
@@ -42,6 +42,11 @@ class Socket(Serializable):
     def removeEdge(self, edge):
         if edge in self.edges: self.edges.remove(edge)
         else: logger.warning(f"  WARNING!\n    Socket::removeEdge wanna remove Edge: {edge} from self.edges but it's not in the list.")
+
+    def removeAllEdges(self):
+        while self.edges:
+            edge = self.edges.pop(0)
+            edge.remove()
     
     def serialize(self):
         return OrderedDict([

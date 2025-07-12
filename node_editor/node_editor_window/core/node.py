@@ -30,13 +30,23 @@ class Node(Serializable):
         counter = 0
 
         for item in inputs:
-            socket = Socket(node=self, index=counter, position=LEFT_BOTTOM, socket_type=item)
+            socket = Socket(
+                node=self, 
+                index=counter, 
+                position=LEFT_BOTTOM, 
+                socket_type=item,
+                multi_edges=False)
             counter += 1
             self.inputs.append(socket)
 
         counter = 0
         for item in outputs:
-            socket = Socket(node=self, index=counter, position=RIGHT_TOP, socket_type=item)
+            socket = Socket(
+                node=self, 
+                index=counter, 
+                position=RIGHT_TOP, 
+                socket_type=item,
+                multi_edges=True)
             counter += 1
             self.outputs.append(socket)
 
