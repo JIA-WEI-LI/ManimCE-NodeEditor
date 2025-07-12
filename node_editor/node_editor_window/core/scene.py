@@ -54,12 +54,12 @@ class Scene(Serializable):
         self.edges.append(edge)
 
     def removeNode(self, node):
-        if node in self.nodes:
-            self.nodes.remove(node)
+        if node in self.nodes: self.nodes.remove(node)
+        else: logger.warning(f"  WARNING!\n    Scene::removeNode wanna remove Node: {node} from self.nodes but it's not in the list.")
 
     def removeEdge(self, edge):
-        if edge in self.edges:
-            self.edges.remove(edge)
+        if edge in self.edges: self.edges.remove(edge)
+        else: logger.warning(f"  WARNING!\n    Scene::removeEdge wanna remove Edge: {edge} from self.edges but it's not in the list.")
 
     def clear(self):
         while len(self.nodes) > 0:
