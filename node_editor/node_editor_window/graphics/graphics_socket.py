@@ -24,6 +24,9 @@ class QDMGraphicsSocket(QGraphicsItem):
         self._pen.setWidthF(self.outline_width)
         self._brush = QColor(self._color_background)
 
+    def __str__(self):
+        return "< QDMGraphicsSocket %s ... %s >" % (hex(id(self))[2:5], hex(id(self))[-3:])
+
     def paint(self, painter: QPainter, QStyleOptionGraphicsItem, widget = None):
         painter.setBrush(self._brush)
         painter.setPen(self._pen)

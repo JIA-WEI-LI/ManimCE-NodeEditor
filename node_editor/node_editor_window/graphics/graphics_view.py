@@ -1,4 +1,4 @@
-import os
+import os, sys
 import pprint
 import logging
 logger = logging.getLogger(__name__)
@@ -194,7 +194,7 @@ class QDMGraphicsView(QGraphicsView):
 
         item = self.getItemAtClick(event)
         if isinstance(item, QDMGraphicsEdge): logger.debug(f"RBM DEBUG: {item.edge} connecting sockets: {item.edge.start_socket} <--> {item.edge.end_socket}")
-        if isinstance(item, QDMGraphicsSocket): logger.debug(f"RBM DEBUG: {item.socket} has edge:\n    {pprint.pformat(item.socket.edges)}")
+        if isinstance(item, QDMGraphicsSocket): logger.debug(f"RBM DEBUG: {item.socket} has edges:\n{pprint.pformat(item.socket.edges)}")
 
         if item is None:
             logger.debug(f"SCENE: {self.graphicsScene}")
@@ -245,12 +245,13 @@ class QDMGraphicsView(QGraphicsView):
         #     self.graphicsScene.scene.history.undo()
         # elif event.key() == Qt.Key.Key_Z and event.modifiers() & Qt.KeyboardModifier.ControlModifier and event.modifiers() & Qt.KeyboardModifier.ShiftModifier:
         #     self.graphicsScene.scene.history.redo()
-        # elif event.key() == Qt.Key.Key_H:
-        #     logger.debug(f"HISTORY:    len({len(self.graphicsScene.scene.history.history_stack)}) -- current_step {self.graphicsScene.scene.history.history_current_step}")
-        #     ix = 0
-        #     for item in self.graphicsScene.scene.history.history_stack:
-        #         logger.debug(f"# {ix} -- {item['desc']}")
-        #         ix += 1
+        if event.key() == Qt.Key.Key_H:
+             logger.debug(f"HISTORY:    len({len(self.graphicsScene.scene.history.history_stack)}) -- current_step {self.graphicsScene.scene.history.history_current_step}")
+             logger.debug(f"  * Estimated memory usage per item: {sys.getsizeof(self.graphicsScene.scene.serialize())}")
+             ix = 0
+             for item in self.graphicsScene.scene.history.history_stack:
+                 logger.debug(f"# {ix} -- {item['desc']}")
+                 ix += 1
         # else:
         super().keyPressEvent(event)
 
@@ -311,12 +312,19 @@ class QDMGraphicsView(QGraphicsView):
 
                 # for edge in item.socket.edges:
                 #     edge.remove()
+                if item.socket != self.drag_start_socket:
+                    if not item.socket.is_multi_edges:
+                        item.socket.removeAllEdges()
+                    if not self.drag_start_socket.is_multi_edges:
+                        self.drag_start_socket.removeAllEdges()
 
-                if not item.socket.is_multi_edges:
-                    item.socket.removeAllEdges()
-
-                if not self.drag_start_socket.is_multi_edges:
-                    self.drag_start_socket.removeAllEdges()
+                    new_edge = Edge(
+                        self.graphicsScene.scene,
+                        self.drag_start_socket,
+                        item.socket,
+                        edge_type=EDGE_TYPE_BEZIER
+                    )
+                    logger.debug(f"    create a new Edge: {new_edge} connecting {new_edge.start_socket} <--> {new_edge.end_socket} ")
 
                 # logger.debug(f"    assign End Socket to: {item.socket}")
                 # if self.previousEdge is not None: self.previousEdge.remove()
@@ -328,14 +336,6 @@ class QDMGraphicsView(QGraphicsView):
                 # logger.debug(f"    reassigned start and end sockets to drag edge")
                 # self.drag_edge.updatePositions()
                 # store history
-
-                new_edge = Edge(
-                    self.graphicsScene.scene,
-                    self.drag_start_socket,
-                    item.socket,
-                    edge_type=EDGE_TYPE_BEZIER
-                )
-                logger.debug(f"    create a new Edge: {new_edge} connecting {new_edge.start_socket} <--> {new_edge.end_socket} ")
 
                 self.graphicsScene.scene.history.storeHistory("Create new edge by dragging", setModified=True)
                 return True
