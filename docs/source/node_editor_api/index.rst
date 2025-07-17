@@ -8,4 +8,5 @@ Currently, Node Editor API reference documents for Core, Graphics, and UI module
 
    core/index
    graphics/index
+   serialization/index
    ui/index

@@ -10,3 +10,4 @@ This section documents the Core Graphics module (GraphicsNode, GraphicsEdge, Gra
    graphicsedge
    graphicsscene
    graphicssocket
+   graphicsview
