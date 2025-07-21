@@ -8,7 +8,7 @@ from .edge import Edge
 from .scene_history import SceneHistory
 from .scene_clipboard import SceneClipboard
 from ..graphics.graphics_scene import QDMGraphicsScene
-from ..serialization.serialzable import Serializable
+from ..serialization.serializable import Serializable
 
 class Scene(Serializable):
     def __init__(self):

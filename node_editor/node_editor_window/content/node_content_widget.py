@@ -4,7 +4,7 @@ from collections import OrderedDict
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QTextEdit
 
-from ..serialization.serialzable import Serializable
+from ..serialization.serializable import Serializable
 
 class QDMNodeContentWidget(QWidget, Serializable):
     def __init__(self, node, parent=None):

@@ -3,7 +3,7 @@ logger = logging.getLogger(__name__)
 from collections import OrderedDict
 
 from ..graphics.graphics_socket import QDMGraphicsSocket
-from ..serialization.serialzable import Serializable
+from ..serialization.serializable import Serializable
 
 LEFT_TOP = 1
 LEFT_BOTTOM = 2

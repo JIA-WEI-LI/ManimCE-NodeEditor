@@ -10,6 +10,12 @@ __pycache__/
 # VSCode
 .vscode/
 
+# Sphinx 
+docs/_build/
+docs/build/
+*.log
+*.doctree
+
 # Git
 .git/
 

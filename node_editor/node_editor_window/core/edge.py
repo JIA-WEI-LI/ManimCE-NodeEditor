@@ -3,7 +3,7 @@ logger = logging.getLogger(__name__)
 from collections import OrderedDict
 
 from ..graphics.graphics_edge import QDMGraphicsEdgeDirect, QDMGraphicsEdgeBezier
-from ..serialization.serialzable import Serializable
+from ..serialization.serializable import Serializable
 
 EDGE_TYPE_DIRECT = 1
 EDGE_TYPE_BEZIER = 2
