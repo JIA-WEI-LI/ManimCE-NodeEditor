@@ -4,6 +4,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from PyQt5.QtWidgets import QMainWindow, QAction, QFileDialog, QLabel, QApplication, QMessageBox
+from PyQt5.QtCore import QPoint, QSize, QSettings
 
 from .. import __version__
 from .node_editor_widget import NodeEditorWidget
@@ -11,6 +12,9 @@ from .node_editor_widget import NodeEditorWidget
 class NodeEditorWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        self.name_company = "Blenderfreak"
+        self.name_product = "NodeEditor"
 
         self.filename = None
         self.initUI()
@@ -171,3 +175,15 @@ class NodeEditorWindow(QMainWindow):
             return
         
         self.centralWidget().scene.clipboard.deserializeFromClipboard(data)
+
+    def readSettings(self):
+        settings = QSettings(self.name_company, self.name_product)
+        pos = settings.value('pos', QPoint(200, 200))
+        size = settings.value('size', QSize(400, 400))
+        self.move(pos)
+        self.resize(size)
+
+    def writeSettings(self):
+        settings = QSettings(self.name_company, self.name_product)
+        settings.setValue('pos', self.pos())
+        settings.setValue('size', self.size())
