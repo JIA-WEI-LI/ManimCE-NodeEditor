@@ -1,5 +1,6 @@
-from PyQt5.QtWidgets import QMainWindow, QMdiArea, QWidget
+from PyQt5.QtWidgets import QMdiArea, QWidget, QListWidget, QDockWidget, QMessageBox, QAction
 from PyQt5.QtCore import Qt, QSignalMapper
+from PyQt5.QtGui import QKeySequence
 
 from node_editor_window.ui.node_editor_window import NodeEditorWindow
 
@@ -26,26 +27,87 @@ class CalculatorWindow(NodeEditorWindow):
         self.createStatusBar()
         self.updateMenus()
 
+        self.createNodesDock()
+
         self.readSettings()
         self.setWindowTitle("Calculator NodeEditor Example")
 
-    def createActions(self):
-        pass
-
-    def createMenus(self):
-        pass
-
-    def createToolBars(self):
-        pass
-
-    def createStatusBar(self):
-        self.statusBar().showMessage("Ready")
+    def closeEvent(self, event):
+        self.mdiArea.closeAllSubWindows()
+        if self.mdiArea.currentSubWindow():
+            event.ignore()
+        else:
+            self.writeSettings()
+            event.accept()
 
     def updateMenus(self):
         pass
 
-    def readSettings(self):
+    def createActions(self):
+        super().createActions()
+
+        self.closeAct = QAction("Cl&ose", self, statusTip="Close the active window", triggered=self.mdiArea.closeActiveSubWindow)
+        self.closeAllAct = QAction("Close &All", self, statusTip="Close all the windows", triggered=self.mdiArea.closeAllSubWindows)
+        self.tileAct = QAction("&Tile", self, statusTip="Tile the windows", triggered=self.mdiArea.tileSubWindows)
+        self.cascadeAct = QAction("&Cascade", self, statusTip="Cascade the windows", triggered=self.mdiArea.cascadeSubWindows)
+        self.nextAct = QAction("Ne&xt", self, shortcut=QKeySequence.NextChild, statusTip="Move the focus to the next window", triggered=self.mdiArea.activateNextSubWindow)
+        self.previousAct = QAction("Pre&vious", self, shortcut=QKeySequence.PreviousChild, statusTip="Move the focus to the previous window", triggered=self.mdiArea.activatePreviousSubWindow)
+        self.separatorAct = QAction(self)
+        self.separatorAct.setSeparator(True)
+
+        self.aboutAct = QAction("&About", self, statusTip="Show the application's About box", triggered=self.about)
+
+    def about(self):
+        QMessageBox.about(self, "About Calculator NodeEditor Example",
+                "The <b>Calculator NodeEditor</b> example demonstrates how to write multiple "
+                "document interface applications using PyQt5 and NodeEditor. For more information visit: "
+                "<a href='https://www.blenderfreak.com/'>www.BlenderFreak.com</a>")
+
+    def createMenus(self):
+        super().createMenus()
+
+        self.windowMenu = self.menuBar().addMenu("&Window")
+        self.updateWindowMenu()
+        self.windowMenu.aboutToShow.connect(self.updateWindowMenu)
+
+        self.menuBar().addSeparator()
+
+        self.helpMenu = self.menuBar().addMenu("&Help")
+        self.helpMenu.addAction(self.aboutAct)
+
+    def updateWindowMenu(self):
+        self.windowMenu.clear()
+        self.windowMenu.addAction(self.closeAct)
+        self.windowMenu.addAction(self.closeAllAct)
+        self.windowMenu.addSeparator()
+        self.windowMenu.addAction(self.tileAct)
+        self.windowMenu.addAction(self.cascadeAct)
+        self.windowMenu.addSeparator()
+        self.windowMenu.addAction(self.nextAct)
+        self.windowMenu.addAction(self.previousAct)
+        self.windowMenu.addAction(self.separatorAct)
+
+        windows = self.mdiArea.subWindowList()
+        self.separatorAct.setVisible(len(windows) != 0)
+
+    def createToolBars(self):
         pass
+
+    def createNodesDock(self):
+        self.listWidget = QListWidget()
+        self.listWidget.addItem("Add")
+        self.listWidget.addItem("Substract")
+        self.listWidget.addItem("Multiply")
+        self.listWidget.addItem("Divide")
+
+        self.items = QDockWidget("Nodes")
+        self.items.setWidget(self.listWidget)
+        self.items.setFloating(False)
+
+        self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.items)
+
+    def createStatusBar(self):
+        self.statusBar().showMessage("Ready")
 
     def setActiveSubWindow(self, window):
         if window:
