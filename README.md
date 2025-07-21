@@ -31,7 +31,7 @@ A PyQt5-based visual node editor designed to **simplify the creation of ManimCE 
 | Milestone                                            | Progress |
 |-----------------------------------------------------|----------|
 | 1. Basic Node Editor Features                        | ✅ 100%     |
-| 2. Advanced Node Editor Features                     | ⚖️ 90.91%   |
+| 2. Advanced Node Editor Features                     | ✅ 100%   |
 | 3. Node Editor Packaging                             | ❌ 0%       |
 | 4. Node Editor Embedded Window Integration           | ❌ 0%       |
 | 5. Completion of Node Editor                         | ❌ 0%       |
@@ -91,11 +91,11 @@ Official tutorial website is under development and will provide:
 * Export `.py` and video files directly
 
 ## 🔻 Roadmap & Tags
-*  `v0.1.0` ：  🎯 Basic node editing complete
-*  `v0.2.0` ：  🔁 Advanced logic, edge types, and serialization
+*  `v0.0.1` ：  🎯 Basic node editing complete
+*  `v0.0.2` ：  🔁 Advanced logic, edge types, and serialization
   
 ### 📦 Current Version
-**`v0.2.0.dev9`** – Under active development  
+**`v0.0.2.dev9`** – Under active development  
 
 ## 📄 License
 [MIT License](./LICENSE)

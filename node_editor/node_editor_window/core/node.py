@@ -7,7 +7,7 @@ from collections import OrderedDict
 from .socket import Socket, LEFT_TOP, RIGHT_TOP, LEFT_BOTTOM, RIGHT_BOTTOM
 from ..graphics.graphics_node import QDMGraphicsNode
 from ..content.node_content_widget import QDMNodeContentWidget
-from ..serialization.serialzable import Serializable
+from ..serialization.serializable import Serializable
 
 class Node(Serializable):
     def __init__(self, scene, title:str = "Undefined Node", inputs:List = [], outputs:List = []):
@@ -60,7 +60,8 @@ class Node(Serializable):
         self.graphicsNode.setPos(x, y)
 
     @property
-    def title(self): return self._title
+    def title(self):
+        return self._title
     @title.setter
     def title(self, value):
         self._title = value
