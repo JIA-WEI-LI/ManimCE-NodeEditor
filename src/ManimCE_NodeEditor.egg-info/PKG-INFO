@@ -1,3 +1,20 @@
+Metadata-Version: 2.4
+Name: ManimCE-NodeEditor
+Version: 0.0.3.dev2
+Summary: A Node Editor for Manim Community Edition built with PyQt5.
+Author-email: Magicsoldier19 <magicsoldier19@gmail.com>
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: docutils==0.21.2
+Requires-Dist: furo>=2025.7.19
+Requires-Dist: pyqt5==5.15.11
+Requires-Dist: pyqt5-qt5==5.15.2
+Requires-Dist: sphinx>=8.2.3
+Requires-Dist: sphinx-autodoc-typehints>=3.2.0
+Requires-Dist: sphinx-inline-tabs>=2023.4.21
+Dynamic: license-file
+
 <!-- Language Switch -->
 <p align="right">
   🌐 <strong>Language：</strong>
