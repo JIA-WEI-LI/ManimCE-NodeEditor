@@ -16,18 +16,9 @@ class NodeEditorWindow(QMainWindow):
         self.name_company = "Blenderfreak"
         self.name_product = "NodeEditor"
 
-        self.filename = None
         self.initUI()
 
-        QApplication.instance().clipboard().dataChanged.connect(self.onClipboardChanged)
-
-    def onClipboardChanged(self):
-        clip = QApplication.instance().clipboard()
-        logger.debug("Clipboard changed: "+ clip.text())
-
     def initUI(self):
-        menubar = self.menuBar()
-
         # initialize menu
         self.createActions()
         self.createMenus()
@@ -140,7 +131,7 @@ class NodeEditorWindow(QMainWindow):
                 self.setTitle()
 
     def onFileSave(self):
-        if self.filename == None: return self.onFileSaveAs()
+        if self.filename is None: return self.onFileSaveAs()
         self.getCurrentNodeEditorWidget().scene.saveToFile(self.filename)
         self.statusBar().showMessage(self.tr("Successfully saved") + " %s" % self.filename)
         return True

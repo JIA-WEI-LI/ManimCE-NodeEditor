@@ -103,10 +103,10 @@ class Scene(Serializable):
 
         # Create Node
         for node_data in data['nodes']:
-            Node(self).deserialize(node_data, hashmap)
+            Node(self).deserialize(node_data, hashmap, restore_id)
 
         # Create Edge
         for edge_data in data['edges']:
-            Edge(self).deserialize(edge_data, hashmap)
+            Edge(self).deserialize(edge_data, hashmap, restore_id)
 
         return True

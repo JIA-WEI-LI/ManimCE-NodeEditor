@@ -72,22 +72,6 @@ class CalculatorWindow(NodeEditorWindow):
                 "The <b>Calculator NodeEditor</b> example demonstrates how to write multiple "
                 "document interface applications using PyQt5 and NodeEditor. For more information visit: "
                 "<a href='https://www.blenderfreak.com/'>www.BlenderFreak.com</a>")
-        
-        windows = self.mdiArea.subWindowList()
-        self.separatorAct.setVisible(len(windows) != 0)
-        
-        for i, window in enumerate(windows):
-            child = window.widget()
-
-            text = "%d %s" % (i + 1, child.getUserFriendlyFilename())
-            if i < 9:
-                text = '&' + text
-
-            action = self.windowMenu.addAction(text)
-            action.setCheckable(True)
-            action.setChecked(child is self.activeMdiChild())
-            action.triggered.connect(self.windowMapper.map)
-            self.windowMapper.setMapping(action, window)    
 
     def createMenus(self):
         super().createMenus()
@@ -115,6 +99,22 @@ class CalculatorWindow(NodeEditorWindow):
 
         windows = self.mdiArea.subWindowList()
         self.separatorAct.setVisible(len(windows) != 0)
+
+        windows = self.mdiArea.subWindowList()
+        self.separatorAct.setVisible(len(windows) != 0)
+        
+        for i, window in enumerate(windows):
+            child = window.widget()
+
+            text = "%d %s" % (i + 1, child.getUserFriendlyFilename())
+            if i < 9:
+                text = '&' + text
+
+            action = self.windowMenu.addAction(text)
+            action.setCheckable(True)
+            action.setChecked(child is self.activeMdiChild())
+            action.triggered.connect(self.windowMapper.map)
+            self.windowMapper.setMapping(action, window)    
 
     def createToolBars(self):
         pass

@@ -72,14 +72,14 @@ class SceneHistory():
 
         self.scene.deserialize(history_stamp['snapshot'])
 
-        for node_id in history_stamp['selection']['nodes']:
-            for node in self.scene.nodes:
-                if node.id == node_id:
-                    node.graphicsNode.setSelected(True)
-                    break
-
         for edge_id in history_stamp['selection']['edges']:
             for edge in self.scene.edges:
                 if edge.id == edge_id:
                     edge.graphicsEdge.setSelected(True)
+                    break
+
+        for node_id in history_stamp['selection']['nodes']:
+            for node in self.scene.nodes:
+                if node.id == node_id:
+                    node.graphicsNode.setSelected(True)
                     break

@@ -14,7 +14,7 @@ class NodeEditorWidget(QWidget):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-        self.stylesheet_filename = "node_editor/node_editor_window/qss/nodestyle.qss"
+        self.stylesheet_filename = "src/node_editor_window/qss/nodestyle.qss"
         self.loadStylesheet(self.stylesheet_filename)
 
         self.filename = None
@@ -28,13 +28,12 @@ class NodeEditorWidget(QWidget):
 
         # Create graphics scene
         self.scene = Scene()
-        self.graphicsScene = self.scene.graphicsScene
+        # self.graphicsScene = self.scene.graphicsScene
 
         self.addNodes()
 
         # Create graphics view
         self.view = QDMGraphicsView(self.scene.graphicsScene, self)
-        self.view.setScene(self.graphicsScene)
         self.layout.addWidget(self.view)
 
     def isModified(self):
