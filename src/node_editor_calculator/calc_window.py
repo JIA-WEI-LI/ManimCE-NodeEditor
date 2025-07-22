@@ -1,7 +1,11 @@
+import logging
+logger = logging.getLogger(__name__)
+
 from PyQt5.QtWidgets import QMdiArea, QWidget, QListWidget, QDockWidget, QMessageBox, QAction
 from PyQt5.QtCore import Qt, QSignalMapper
 from PyQt5.QtGui import QKeySequence
 
+from .calc_sub_window import CalculatorSubWindow
 from node_editor_window.ui.node_editor_window import NodeEditorWindow
 
 class CalculatorWindow(NodeEditorWindow):
@@ -57,11 +61,33 @@ class CalculatorWindow(NodeEditorWindow):
 
         self.aboutAct = QAction("&About", self, statusTip="Show the application's About box", triggered=self.about)
 
+    def onFileNew(self):
+        try:
+            subwnd = self.createMdiChild()
+            subwnd.show()
+        except Exception as e: logger.error(e)
+
     def about(self):
         QMessageBox.about(self, "About Calculator NodeEditor Example",
                 "The <b>Calculator NodeEditor</b> example demonstrates how to write multiple "
                 "document interface applications using PyQt5 and NodeEditor. For more information visit: "
                 "<a href='https://www.blenderfreak.com/'>www.BlenderFreak.com</a>")
+        
+        windows = self.mdiArea.subWindowList()
+        self.separatorAct.setVisible(len(windows) != 0)
+        
+        for i, window in enumerate(windows):
+            child = window.widget()
+
+            text = "%d %s" % (i + 1, child.getUserFriendlyFilename())
+            if i < 9:
+                text = '&' + text
+
+            action = self.windowMenu.addAction(text)
+            action.setCheckable(True)
+            action.setChecked(child is self.activeMdiChild())
+            action.triggered.connect(self.windowMapper.map)
+            self.windowMapper.setMapping(action, window)    
 
     def createMenus(self):
         super().createMenus()
@@ -108,6 +134,18 @@ class CalculatorWindow(NodeEditorWindow):
 
     def createStatusBar(self):
         self.statusBar().showMessage("Ready")
+
+    def createMdiChild(self):
+        nodeeditor = CalculatorSubWindow()
+        subwnd = self.mdiArea.addSubWindow(nodeeditor)
+        return subwnd
+
+    def activeMdiChild(self):
+        """ we're returning NodeEditorWidget here... """
+        activeSubWindow = self.mdiArea.activeSubWindow()
+        if activeSubWindow:
+            return activeSubWindow.widget()
+        return None
 
     def setActiveSubWindow(self, window):
         if window:
