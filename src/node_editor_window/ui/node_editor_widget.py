@@ -14,9 +14,6 @@ class NodeEditorWidget(QWidget):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-        self.stylesheet_filename = "src/node_editor_window/qss/nodeeditor.qss"
-        self.loadStylesheet(self.stylesheet_filename)
-
         self.filename = None
 
         self.initUI()
@@ -56,10 +53,3 @@ class NodeEditorWidget(QWidget):
 
         edge_1 = Edge(self.scene, node_1.outputs[0], node_2.inputs[0], edge_type=EDGE_TYPE_BEZIER)
         edge_2 = Edge(self.scene, node_2.outputs[0], node_3.inputs[0], edge_type=EDGE_TYPE_BEZIER)
-
-    def loadStylesheet(self, filename):
-        logger.info(f"Loading stylesheet from {filename}")
-        file = QFile(filename)
-        file.open(QFile.OpenModeFlag.ReadOnly | QFile.OpenModeFlag.Text)
-        stylesheet = file.readAll()
-        QApplication.instance().setStyleSheet(str(stylesheet, encoding='utf-8'))
