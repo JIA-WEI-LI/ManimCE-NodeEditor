@@ -95,7 +95,7 @@ QMdiArea QTabBar QToolButton::right-arrow {
 
 QMdiArea QTabBar::close-button:selected {
     image: url(":icons/tab_close_btn.png");
-    origin: border;
+    /* origin: border; */
     subcontrol-origin: border;
     subcontrol-position: right bottom;
 }
@@ -104,7 +104,7 @@ QMdiArea QTabBar::close-button:!selected {
 }
 
 QMdiSubWindow {
-    border-size: 1px;
+    /* border-size: 1px; */
     border-style: solid;
     background: #616161;
 }
