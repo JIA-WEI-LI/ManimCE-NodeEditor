@@ -101,7 +101,7 @@ python NodeEditor/node_editor_main.py
 - `v0.0.2` ：🔁 完善進階邏輯、邊線與序列化  
 
 ### 📦 當前版本
-**`v0.0.3.dev2`** – 持續開發中  
+**`v0.0.3.dev3`** – 持續開發中  
 
 ---
 
