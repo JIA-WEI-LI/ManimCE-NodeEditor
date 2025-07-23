@@ -83,29 +83,6 @@ class CalculatorWindow(NodeEditorWindow):
             subwnd.show()
         except Exception as e: logger.error(e)
 
-    # def onFileSave(self):
-    #     current_nodeeditor = self.activeMdiChild()
-    #     if current_nodeeditor:
-    #         if not current_nodeeditor.isFilenameSet():
-    #             return self.onFileSaveAs()
-    #         else:
-    #             current_nodeeditor.fileSave() # we don't pass argument, keep the filename
-    #             self.statusBar().showMessage("Succesfully saved %s" % current_nodeeditor.filename, 5000)
-    #             current_nodeeditor.setTitle()
-    #             return True
-
-    # def onFileSaveAs(self):
-    #     current_nodeeditor = self.activeMdiChild()
-    #     if current_nodeeditor:
-    #         fname, filter = QFileDialog.getSaveFileName(self, "Save graph file")
-
-    #         if fname == '': return False
-
-    #         current_nodeeditor.fileSave(fname)
-    #         current_nodeeditor.setTitle()
-    #         self.statusBar().showMessage("Successfully saved as %s" % fname, 5000)
-    #         return True
-
     def onFileOpen(self):
         fnames, filter = QFileDialog.getOpenFileNames(self, 'Open graph from file')
 
@@ -239,13 +216,6 @@ class CalculatorWindow(NodeEditorWindow):
             if window.widget().filename == filename:
                 return window
         return None
-
-    # def activeMdiChild(self):
-    #     """ we're returning NodeEditorWidget here... """
-    #     activeSubWindow = self.mdiArea.activeSubWindow()
-    #     if activeSubWindow:
-    #         return activeSubWindow.widget()
-    #     return None
 
     def setActiveSubWindow(self, window):
         if window:
