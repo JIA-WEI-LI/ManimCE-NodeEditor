@@ -14,7 +14,7 @@ class NodeEditorWidget(QWidget):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-        self.stylesheet_filename = "src/node_editor_window/qss/nodestyle.qss"
+        self.stylesheet_filename = "src/node_editor_window/qss/nodeeditor.qss"
         self.loadStylesheet(self.stylesheet_filename)
 
         self.filename = None
