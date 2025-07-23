@@ -180,7 +180,7 @@ class NodeEditorWindow(QMainWindow):
         try:
             data = json.loads(raw_data)
         except ValueError as e:
-            logger.error("Pasting of not valid json data! " + e)
+            logger.error(f"Pasting of not valid json data! : {e}")
             return
         
         # Check if the json data are correct
