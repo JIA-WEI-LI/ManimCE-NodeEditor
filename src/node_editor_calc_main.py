@@ -11,6 +11,7 @@ from node_editor_calculator.calc_window import CalculatorWindow
 
 def main():
     app = QApplication(sys.argv + ['-platform', 'windows:darkmode=1'])
+    app.setStyle('Fusion')
     window = CalculatorWindow()
     window.show()
 

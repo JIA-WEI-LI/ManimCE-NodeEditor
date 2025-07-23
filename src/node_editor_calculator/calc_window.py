@@ -1,3 +1,4 @@
+import os
 import logging
 logger = logging.getLogger(__name__)
 
@@ -6,12 +7,22 @@ from PyQt5.QtCore import Qt, QSignalMapper
 from PyQt5.QtGui import QKeySequence
 
 from .calc_sub_window import CalculatorSubWindow
+from utils.qss_loader import loadStylesheets
 from node_editor_window.ui.node_editor_window import NodeEditorWindow
 
 class CalculatorWindow(NodeEditorWindow):
     def initUI(self):
         self.name_company = "Blenderfreak"
         self.name_product = "Calculator NodeEditor"
+
+        base_path = os.path.dirname(__file__)                     # → .../node_editor_calculator
+        src_path = os.path.dirname(base_path)                     # → .../src
+        node_editor_qss_path = os.path.join(src_path, "node_editor_window", "qss")
+        self.stylesheet_filename = os.path.join(node_editor_qss_path, "nodeeditor.qss")
+        loadStylesheets(
+            os.path.join(node_editor_qss_path, "nodeeditor-dark.qss"),
+            self.stylesheet_filename
+        )
 
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
