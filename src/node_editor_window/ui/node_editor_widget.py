@@ -2,10 +2,10 @@ import os
 import logging
 logger = logging.getLogger(__name__)
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QApplication
-from PyQt5.QtCore import QFile
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QApplication, QMessageBox
+from PyQt5.QtCore import Qt
 
-from ..core.scene import Scene
+from ..core.scene import Scene, InvalidFile
 from ..core.node import Node
 from ..core.edge import Edge, EDGE_TYPE_BEZIER
 from ..graphics.graphics_view import QDMGraphicsView
@@ -42,6 +42,34 @@ class NodeEditorWidget(QWidget):
     def getUserFriendlyFilename(self):
         name = os.path.basename(self.filename) if self.isFilenameSet() else "New Graph"
         return name + ("*" if self.isModified() else "")
+    
+    def fileNew(self):
+        self.scene.clear()
+        self.filename = None
+
+    def fileLoad(self, filename):
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        try:
+            self.scene.loadFromFile(filename)
+            self.filename = filename
+            # clear history
+            return True
+        except InvalidFile as e:
+            print(e)
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, "Error loading %s" % os.path.basename(filename), str(e))
+            return False
+        finally:
+            QApplication.restoreOverrideCursor()
+
+
+    def fileSave(self, filename=None):
+        # when called with empty parameter, we won't store the filename
+        if filename is not None: self.filename = filename
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        self.scene.saveToFile(self.filename)
+        QApplication.restoreOverrideCursor()
+        return True
 
     def addNodes(self):
         node_1 = Node(self.scene, "My Node 1", inputs=[0, 0, 0], outputs=[1])

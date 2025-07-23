@@ -1,3 +1,4 @@
+import os
 import json
 import logging
 logger = logging.getLogger(__name__)
@@ -9,6 +10,8 @@ from .scene_history import SceneHistory
 from .scene_clipboard import SceneClipboard
 from ..graphics.graphics_scene import QDMGraphicsScene
 from ..serialization.serializable import Serializable
+
+class InvalidFile(Exception): pass
 
 class Scene(Serializable):
     def __init__(self):
@@ -77,10 +80,15 @@ class Scene(Serializable):
     def loadFromFile(self, filename):
         with open(filename, 'r', encoding='utf-8') as file:
             raw_data = file.read()
-            data = json.loads(raw_data)
-            self.deserialize(data)
+            try:
+                data = json.loads(raw_data)
+                self.deserialize(data)
 
-            self.has_been_modified = False
+                self.has_been_modified = False
+            except json.JSONDecodeError:
+                raise InvalidFile("%s is not a valid JSON file" % os.path.basename(filename))
+            except Exception as e:
+                logger.error(f"Error loading file {filename}: {e}")
 
     def serialize(self):
         nodes, edges = [], []
