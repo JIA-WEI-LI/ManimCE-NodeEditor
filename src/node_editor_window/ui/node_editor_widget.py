@@ -1,3 +1,4 @@
+import os
 import logging
 logger = logging.getLogger(__name__)
 
@@ -13,8 +14,10 @@ class NodeEditorWidget(QWidget):
     def __init__(self, parent = None):
         super().__init__(parent)
 
-        self.stylesheet_filename = "node_editor/node_editor_window/qss/nodestyle.qss"
+        self.stylesheet_filename = "src/node_editor_window/qss/nodestyle.qss"
         self.loadStylesheet(self.stylesheet_filename)
+
+        self.filename = None
 
         self.initUI()
 
@@ -25,14 +28,23 @@ class NodeEditorWidget(QWidget):
 
         # Create graphics scene
         self.scene = Scene()
-        self.graphicsScene = self.scene.graphicsScene
+        # self.graphicsScene = self.scene.graphicsScene
 
         self.addNodes()
 
         # Create graphics view
         self.view = QDMGraphicsView(self.scene.graphicsScene, self)
-        self.view.setScene(self.graphicsScene)
         self.layout.addWidget(self.view)
+
+    def isModified(self):
+        return self.scene.has_been_modified
+
+    def isFilenameSet(self):
+        return self.filename is not None
+
+    def getUserFriendlyFilename(self):
+        name = os.path.basename(self.filename) if self.isFilenameSet() else "New Graph"
+        return name + ("*" if self.isModified() else "")
 
     def addNodes(self):
         node_1 = Node(self.scene, "My Node 1", inputs=[0, 0, 0], outputs=[1])

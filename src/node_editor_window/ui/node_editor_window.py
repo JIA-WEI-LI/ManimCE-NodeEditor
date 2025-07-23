@@ -16,24 +16,15 @@ class NodeEditorWindow(QMainWindow):
         self.name_company = "Blenderfreak"
         self.name_product = "NodeEditor"
 
-        self.filename = None
         self.initUI()
 
-        QApplication.instance().clipboard().dataChanged.connect(self.onClipboardChanged)
-
-    def onClipboardChanged(self):
-        clip = QApplication.instance().clipboard()
-        logger.debug("Clipboard changed: "+ clip.text())
-
     def initUI(self):
-        menubar = self.menuBar()
-
         # initialize menu
         self.createActions()
         self.createMenus()
 
         self.node_editor_widget = NodeEditorWidget(self)
-        self.node_editor_widget.scene.addHasBeenModifiedListener(self.changeTitle)
+        self.node_editor_widget.scene.addHasBeenModifiedListener(self.setTitle)
         self.setCentralWidget(self.node_editor_widget)
 
         # status bar
@@ -41,7 +32,7 @@ class NodeEditorWindow(QMainWindow):
 
         # set window properties
         self.setGeometry(200,200,800,600)
-        self.changeTitle()
+        self.setTitle()
         self.show()
 
     def createStatusBar(self):
@@ -86,16 +77,9 @@ class NodeEditorWindow(QMainWindow):
         self.editMenu.addSeparator()
         self.editMenu.addAction(self.actDelete)
     
-    def changeTitle(self):
+    def setTitle(self):
         title = f"Node Editor v{__version__} - "
-        if self.filename == None:
-            title += "New"
-        else:
-            title += os.path.basename(self.filename)
-
-        if self.centralWidget().scene.has_been_modified:
-            title += "*"
-
+        title += self.getCurrentNodeEditorWidget().getUserFriendlyFilename()
         self.setWindowTitle(title)
 
     def closeEvent(self, event):
@@ -105,7 +89,10 @@ class NodeEditorWindow(QMainWindow):
             event.ignore()
 
     def isModified(self):
-        return self.centralWidget().scene.has_been_modified
+        return self.getCurrentNodeEditorWidget().scene.has_been_modified
+    
+    def getCurrentNodeEditorWidget(self):
+        return self.centralWidget()
 
     def maybeSave(self):
         if not self.isModified():
@@ -130,22 +117,22 @@ class NodeEditorWindow(QMainWindow):
 
     def onFileNew(self):
         if self.maybeSave():
-            self.centralWidget().scene.clear()
+            self.getCurrentNodeEditorWidget().scene.clear()
             self.filename = None
-            self.changeTitle()
+            self.setTitle()
 
     def onFileOpen(self):
         if self.maybeSave():
             fname, filter = QFileDialog.getOpenFileName(self, self.tr("Open graph from file"))
             if fname == '': return
             if os.path.isfile(fname):
-                self.centralWidget().scene.loadFromFile(fname)
+                self.getCurrentNodeEditorWidget().scene.loadFromFile(fname)
                 self.filename = fname
-                self.changeTitle()
+                self.setTitle()
 
     def onFileSave(self):
-        if self.filename == None: return self.onFileSaveAs()
-        self.centralWidget().scene.saveToFile(self.filename)
+        if self.filename is None: return self.onFileSaveAs()
+        self.getCurrentNodeEditorWidget().scene.saveToFile(self.filename)
         self.statusBar().showMessage(self.tr("Successfully saved") + " %s" % self.filename)
         return True
 
@@ -157,21 +144,21 @@ class NodeEditorWindow(QMainWindow):
         return True
 
     def onEditUndo(self):
-        self.centralWidget().scene.history.undo()
+        self.getCurrentNodeEditorWidget().scene.history.undo()
 
     def onEditRedo(self):
-        self.centralWidget().scene.history.redo()
+        self.getCurrentNodeEditorWidget().scene.history.redo()
 
     def onEditDelete(self):
-        self.centralWidget().scene.graphicsScene.views()[0].deleteSelected()
+        self.getCurrentNodeEditorWidget().scene.graphicsScene.views()[0].deleteSelected()
 
     def onEditCut(self):
-        data = self.centralWidget().scene.clipboard.serializeSelected(delete=True)
+        data = self.getCurrentNodeEditorWidget().scene.clipboard.serializeSelected(delete=True)
         str_data = json.dumps(data, indent=4)
         QApplication.instance().clipboard().setText(str_data)
 
     def onEditCopy(self):
-        data = self.centralWidget().scene.clipboard.serializeSelected(delete=False)
+        data = self.getCurrentNodeEditorWidget().scene.clipboard.serializeSelected(delete=False)
         str_data = json.dumps(data, indent=4)
         logger.debug(str_data)
         QApplication.instance().clipboard().setText(str_data)
@@ -190,7 +177,7 @@ class NodeEditorWindow(QMainWindow):
             logger.warning("JSON does not contain any nodes!")
             return
         
-        self.centralWidget().scene.clipboard.deserializeFromClipboard(data)
+        self.getCurrentNodeEditorWidget().scene.clipboard.deserializeFromClipboard(data)
 
     def readSettings(self):
         settings = QSettings(self.name_company, self.name_product)
