@@ -62,7 +62,15 @@ class QDMGraphicsNode(QGraphicsItem):
             self._was_moved = False
             self.node.scene.history.storeHistory("Node moved", setModified=True)
 
-        if self._last_selected_state != self.isSelected():
+            self.node.scene.resetLastSelectedStates()
+            self._last_selected_state = True
+
+            # we need to store the last selected state, because moving does also select the nodes
+            self.node.scene._last_selected_items = self.node.scene.getSelectedItems()
+            return
+
+        # handle when grNode was clicked on
+        if self._last_selected_state != self.isSelected() or self.node.scene._last_selected_items != self.node.scene.getSelectedItems():
             self.node.scene.resetLastSelectedStates()
             self._last_selected_state = self.isSelected()
             self.onSelected()

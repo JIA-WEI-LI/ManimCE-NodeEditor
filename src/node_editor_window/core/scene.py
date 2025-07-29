@@ -24,6 +24,7 @@ class Scene(Serializable):
 
         self._has_been_modified = False
         self._has_been_modified_listeners = []
+        self._last_selected_items = []
         self._item_selected_listeners = []
         self._items_deselected_listeners = []
 
@@ -39,10 +40,18 @@ class Scene(Serializable):
         self.graphicsScene.setGraphicsScene(self.scene_width, self.scene_height)
 
     def onItemSelected(self):
-        logger.info(" ~onItemSelected")
+        current_selected_items = self.getSelectedItems()
+        if current_selected_items != self._last_selected_items:
+            self._last_selected_items = current_selected_items
+            self.history.storeHistory("Selection Changed")
+            for callback in self._item_selected_listeners: callback()
 
     def onItemsDeselected(self):
-        logger.info(" ~onItemsDeselected")
+        self.resetLastSelectedStates()
+        if self._last_selected_items != []:
+            self._last_selected_items = []
+            self.history.storeHistory("Deselected Everything")
+            for callback in self._items_deselected_listeners: callback()
 
     def isModified(self):
         return self.has_been_modified
@@ -59,8 +68,7 @@ class Scene(Serializable):
             self._has_been_modified = value
 
             # call all registered listeners
-            for callback in self._has_been_modified_listeners:
-                callback()
+            for callback in self._has_been_modified_listeners: callback()
 
         self._has_been_modified = value
 
