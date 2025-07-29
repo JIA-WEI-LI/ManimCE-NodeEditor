@@ -184,8 +184,20 @@ class QDMGraphicsView(QGraphicsView):
             return 
         
         if self.rubberBandDragginRectangle:
-            self.graphicsScene.scene.history.storeHistory("Selection changed")
             self.rubberBandDragginRectangle = False
+            current_selected_items = self.graphicsScene.selectedItems()
+
+            if current_selected_items != self.graphicsScene.scene._last_selected_items:
+                if current_selected_items == []:
+                    self.graphicsScene.itemsDeselected.emit()
+                else:
+                    self.graphicsScene.itemSelected.emit()
+                self.graphicsScene.scene._last_selected_items = current_selected_items
+            return
+
+        # otherwise deselect everything
+        if item is None:
+            self.graphicsScene.itemsDeselected.emit()
 
         super().mouseReleaseEvent(event)
 
