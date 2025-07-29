@@ -14,7 +14,8 @@ from utils.qss_loader import loadStylesheet
 
 def main():
     app = QApplication(sys.argv + ['-platform', 'windows:darkmode=1'])
-    window = NodeEditorWindow() 
+    window = NodeEditorWindow()
+    window.node_editor_widget.addNodes()
 
     module_path = os.path.dirname(inspect.getfile(window.__class__))
     node_editor_path = os.path.dirname(module_path)
