@@ -24,10 +24,25 @@ class Scene(Serializable):
 
         self._has_been_modified = False
         self._has_been_modified_listeners = []
+        self._item_selected_listeners = []
+        self._items_deselected_listeners = []
 
         self.initUI()
         self.history = SceneHistory(self)
         self.clipboard = SceneClipboard(self)
+
+        self.graphicsScene.itemSelected.connect(self.onItemSelected)
+        self.graphicsScene.itemsDeselected.connect(self.onItemsDeselected)
+
+    def initUI(self):
+        self.graphicsScene = QDMGraphicsScene(self)
+        self.graphicsScene.setGraphicsScene(self.scene_width, self.scene_height)
+
+    def onItemSelected(self):
+        logger.info(" ~onItemSelected")
+
+    def onItemsDeselected(self):
+        logger.info(" ~onItemsDeselected")
 
     def isModified(self):
         return self.has_been_modified
@@ -52,9 +67,19 @@ class Scene(Serializable):
     def addHasBeenModifiedListener(self, callback):
         self._has_been_modified_listeners.append(callback)
 
-    def initUI(self):
-        self.graphicsScene = QDMGraphicsScene(self)
-        self.graphicsScene.setGraphicsScene(self.scene_width, self.scene_height)
+    def addItemSelectedListener(self, callback):
+        self._item_selected_listeners.append(callback)
+
+    def addItemsDeselectedListener(self, callback):
+        self._items_deselected_listeners.append(callback)
+
+    # custom flag to detect node or edge has been selected....
+    def resetLastSelectedStates(self):
+        for node in self.nodes:
+            node.graphicsNode._last_selected_state = False
+        for edge in self.edges:
+            edge.graphicsEdge._last_selected_state = False
+
 
     def addNode(self, node):
         self.nodes.append(node)

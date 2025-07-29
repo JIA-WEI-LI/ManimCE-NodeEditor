@@ -1,12 +1,14 @@
 import math
-from PyQt5.QtCore import QLine
+from PyQt5.QtCore import QLine, pyqtSignal
 from PyQt5.QtGui import QColor, QPen, QPainter
 from PyQt5.QtWidgets import QGraphicsScene
 
 class QDMGraphicsScene(QGraphicsScene):
+    itemSelected = pyqtSignal()
+    itemsDeselected = pyqtSignal()
+
     def __init__(self, scene, parent=None):
         super().__init__(parent)
-
         self.scene = scene
 
         self.gridSize = 20

@@ -184,8 +184,8 @@ class QDMGraphicsView(QGraphicsView):
             return 
         
         if self.rubberBandDragginRectangle:
-            self.graphicsScene.scene.history.storeHistory("Selection changed")
             self.rubberBandDragginRectangle = False
+            self.graphicsScene.scene.history.storeHistory("Selection changed")
 
         super().mouseReleaseEvent(event)
 
