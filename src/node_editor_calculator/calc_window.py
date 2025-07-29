@@ -4,7 +4,7 @@ logger = logging.getLogger(__name__)
 
 from PyQt5.QtWidgets import QMdiArea, QWidget, QListWidget, QDockWidget, QMessageBox, QAction, QFileDialog
 from PyQt5.QtCore import Qt, QSignalMapper
-from PyQt5.QtGui import QKeySequence
+from PyQt5.QtGui import QKeySequence, QIcon
 
 from .calc_sub_window import CalculatorSubWindow
 from utils.qss_loader import loadStylesheets
@@ -23,6 +23,7 @@ class CalculatorWindow(NodeEditorWindow):
             os.path.join(node_editor_qss_path, "nodeeditor-dark.qss"),
             self.stylesheet_filename
         )
+        self.empty_icon = QIcon(".")
 
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
@@ -98,7 +99,7 @@ class CalculatorWindow(NodeEditorWindow):
                         if nodeeditor.fileLoad(fname):
                             self.statusBar().showMessage("File %s loaded" % fname, 5000)
                             nodeeditor.setTitle()
-                            subwnd = self.mdiArea.addSubWindow(nodeeditor)
+                            subwnd = self.createMdiChild(nodeeditor)
                             subwnd.show()
                         else:
                             nodeeditor.close()
@@ -143,18 +144,21 @@ class CalculatorWindow(NodeEditorWindow):
         self.updateEditMenu()
 
     def updateEditMenu(self):
-        print("update Edit Menu")
-        active = self.getCurrentNodeEditorWidget()
-        hasMdiChild = (active is not None)
+        try:
+            print("update Edit Menu")
+            active = self.getCurrentNodeEditorWidget()
+            hasMdiChild = (active is not None)
 
-        self.actPaste.setEnabled(hasMdiChild)
+            self.actPaste.setEnabled(hasMdiChild)
 
-        self.actCut.setEnabled(hasMdiChild and active.hasSelectedItems())
-        self.actCopy.setEnabled(hasMdiChild and active.hasSelectedItems())
-        self.actDelete.setEnabled(hasMdiChild and active.hasSelectedItems())
+            self.actCut.setEnabled(hasMdiChild and active.hasSelectedItems())
+            self.actCopy.setEnabled(hasMdiChild and active.hasSelectedItems())
+            self.actDelete.setEnabled(hasMdiChild and active.hasSelectedItems())
 
-        self.actUndo.setEnabled(hasMdiChild and active.canUndo())
-        self.actRedo.setEnabled(hasMdiChild and active.canRedo())
+            self.actUndo.setEnabled(hasMdiChild and active.canUndo())
+            self.actRedo.setEnabled(hasMdiChild and active.canRedo())
+        except Exception as e:
+            logger.error(f"Error updating edit menu: {e}")
 
     def updateWindowMenu(self):
         self.windowMenu.clear()
@@ -206,10 +210,22 @@ class CalculatorWindow(NodeEditorWindow):
     def createStatusBar(self):
         self.statusBar().showMessage("Ready")
 
-    def createMdiChild(self):
-        nodeeditor = CalculatorSubWindow()
+    def createMdiChild(self, child_widget=None):
+        nodeeditor = child_widget if child_widget is not None else CalculatorSubWindow()
         subwnd = self.mdiArea.addSubWindow(nodeeditor)
+        subwnd.setWindowIcon(self.empty_icon)
+        nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
+        nodeeditor.addCloseEventListener(self.onSubWndClose)
         return subwnd
+
+    def onSubWndClose(self, widget, event):
+        existing = self.findMdiChild(widget.filename)
+        self.mdiArea.setActiveSubWindow(existing)
+
+        if self.maybeSave():
+            event.accept()
+        else:
+            event.ignore()
     
     def findMdiChild(self, filename):
         for window in self.mdiArea.subWindowList():

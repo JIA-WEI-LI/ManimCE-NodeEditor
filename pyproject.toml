@@ -1,6 +1,6 @@
 [project]
 name = "ManimCE-NodeEditor"
-version = "0.0.3.dev2"
+version = "0.0.3"
 description = "A Node Editor for Manim Community Edition built with PyQt5."
 authors = [
     { name = "Magicsoldier19", email = "magicsoldier19@gmail.com" }
