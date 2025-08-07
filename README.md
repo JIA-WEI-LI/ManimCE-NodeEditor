@@ -7,7 +7,7 @@
 
 # ManimCE Node Editor — Visual Animation Creator
 
-[![Version](https://img.shields.io/badge/version-v0.2.0.dev9-orange)](#)
+[![Version](https://img.shields.io/badge/version-v0.3.0-orange)](#)
 [![Python](https://img.shields.io/badge/python-3.12+-blue.svg)](#)
 [![Qt](https://img.shields.io/badge/Qt-PyQt5-blue)](#)
 [![License](https://img.shields.io/github/license/JIA-WEI-LI/ManimCE-NodeEditor?color=blue)](./LICENSE)
@@ -31,9 +31,9 @@ A PyQt5-based visual node editor designed to **simplify the creation of ManimCE 
 | Milestone                                            | Progress |
 |-----------------------------------------------------|----------|
 | 1. Basic Node Editor Features                        | ✅ 100%     |
-| 2. Advanced Node Editor Features                     | ✅ 100%   |
-| 3. Node Editor Packaging                             | ❌ 0%      |
-| 4. Node Editor Embedded Window Integration           | ✅ 100%       |
+| 2. Advanced Node Editor Features                     | ✅ 100%     |
+| 3. Node Editor Embedded Window Integration           | ✅ 100%     |
+| 4. Building advanced features of the node editor     | ❌ 0%       |
 | 5. Completion of Node Editor                         | ❌ 0%       |
 | 6. Applying Multiple Styles for UI Design            | ❌ 0%       |
 | 7. Basic Integration with ManimCE Logic              | ❌ 0%       |
