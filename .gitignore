@@ -16,6 +16,9 @@ docs/build/
 *.log
 *.doctree
 
+# uv
+uv.lock
+
 # Git
 .git/
 

@@ -7,7 +7,7 @@
 
 # ManimCE Node Editor — 視覺化動畫製作工具
 
-[![Version](https://img.shields.io/badge/version-v0.2.0.dev9-orange)](#)
+[![Version](https://img.shields.io/badge/version-v0.3.0-orange)](#)
 [![Python](https://img.shields.io/badge/python-3.12+-blue.svg)](#)
 [![Qt](https://img.shields.io/badge/Qt-PyQt5-blue)](#)
 [![License](https://img.shields.io/github/license/JIA-WEI-LI/ManimCE-NodeEditor?color=blue)](./LICENSE)
@@ -29,10 +29,10 @@
 
 | 里程碑                                              | 進度     |
 |-----------------------------------------------------|----------|
-| 1. 基礎節點編輯器功能                               | ✅ 100%     |
-| 2. 進階節點功能擴充                                 | ✅ 100%   |
-| 3. 編輯器打包功能                                   | ❌ 0%       |
-| 4. 嵌入其他視窗的整合介面                           | ❌ 0%       |
+| 1. 基礎節點編輯器功能                               | ✅ 100%    |
+| 2. 進階節點功能擴充                                 | ✅ 100%    |
+| 3. 嵌入其他視窗的整合介面                            | ✅ 100%    |
+| 4. 建立節點編輯器進階功能                            | ❌ 0%      |
 | 5. 節點編輯器功能完善                               | ❌ 0%       |
 | 6. 支援多種 UI 主題樣式                             | ❌ 0%       |
 | 7. 與 ManimCE 的基本邏輯整合                        | ❌ 0%       |
@@ -88,12 +88,6 @@ python NodeEditor/node_editor_main.py
 - 主題切換
 - 節點右鍵選單
 - 拖曳建立節點
-
-### 功能擴充
-- 編輯歷史（Undo/Redo）
-- 複製貼上節點與子圖
-- 專案儲存與載入（JSON）
-
 ### 導出功能
 - 將節點圖轉換為 ManimCE Python 代碼
 - 內建動畫預覽器
@@ -101,13 +95,14 @@ python NodeEditor/node_editor_main.py
 
 ---
 
-## 🔻 發佈節奏與標籤
+## 🔻 發佈版本與標籤
 
 - `v0.0.1` ：🎯 完成基本節點編輯功能  
-- `v0.0.2` ：🔁 完善進階邏輯、邊線與序列化  
+- `v0.0.2` ：🔁 完善進階邏輯、邊線與序列化
+- `v0.0.3` ：📦 完成基本嵌入介面
 
 ### 📦 當前版本
-**`v0.0.2.dev9`** – 持續開發中  
+**`v0.0.3`** – 持續開發中  
 
 ---
 

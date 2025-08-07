@@ -1,3 +1,4 @@
+import os
 import json
 import logging
 logger = logging.getLogger(__name__)
@@ -10,6 +11,8 @@ from .scene_clipboard import SceneClipboard
 from ..graphics.graphics_scene import QDMGraphicsScene
 from ..serialization.serializable import Serializable
 
+class InvalidFile(Exception): pass
+
 class Scene(Serializable):
     def __init__(self):
         super().__init__()
@@ -21,10 +24,40 @@ class Scene(Serializable):
 
         self._has_been_modified = False
         self._has_been_modified_listeners = []
+        self._last_selected_items = []
+        self._item_selected_listeners = []
+        self._items_deselected_listeners = []
 
         self.initUI()
         self.history = SceneHistory(self)
         self.clipboard = SceneClipboard(self)
+
+        self.graphicsScene.itemSelected.connect(self.onItemSelected)
+        self.graphicsScene.itemsDeselected.connect(self.onItemsDeselected)
+
+    def initUI(self):
+        self.graphicsScene = QDMGraphicsScene(self)
+        self.graphicsScene.setGraphicsScene(self.scene_width, self.scene_height)
+
+    def onItemSelected(self):
+        current_selected_items = self.getSelectedItems()
+        if current_selected_items != self._last_selected_items:
+            self._last_selected_items = current_selected_items
+            self.history.storeHistory("Selection Changed")
+            for callback in self._item_selected_listeners: callback()
+
+    def onItemsDeselected(self):
+        self.resetLastSelectedStates()
+        if self._last_selected_items != []:
+            self._last_selected_items = []
+            self.history.storeHistory("Deselected Everything")
+            for callback in self._items_deselected_listeners: callback()
+
+    def isModified(self):
+        return self.has_been_modified
+
+    def getSelectedItems(self):
+        return self.graphicsScene.selectedItems()
 
     @property
     def has_been_modified(self):
@@ -35,17 +68,26 @@ class Scene(Serializable):
             self._has_been_modified = value
 
             # call all registered listeners
-            for callback in self._has_been_modified_listeners:
-                callback()
+            for callback in self._has_been_modified_listeners: callback()
 
         self._has_been_modified = value
 
     def addHasBeenModifiedListener(self, callback):
         self._has_been_modified_listeners.append(callback)
 
-    def initUI(self):
-        self.graphicsScene = QDMGraphicsScene(self)
-        self.graphicsScene.setGraphicsScene(self.scene_width, self.scene_height)
+    def addItemSelectedListener(self, callback):
+        self._item_selected_listeners.append(callback)
+
+    def addItemsDeselectedListener(self, callback):
+        self._items_deselected_listeners.append(callback)
+
+    # custom flag to detect node or edge has been selected....
+    def resetLastSelectedStates(self):
+        for node in self.nodes:
+            node.graphicsNode._last_selected_state = False
+        for edge in self.edges:
+            edge.graphicsEdge._last_selected_state = False
+
 
     def addNode(self, node):
         self.nodes.append(node)
@@ -77,10 +119,15 @@ class Scene(Serializable):
     def loadFromFile(self, filename):
         with open(filename, 'r', encoding='utf-8') as file:
             raw_data = file.read()
-            data = json.loads(raw_data)
-            self.deserialize(data)
+            try:
+                data = json.loads(raw_data)
+                self.deserialize(data)
 
-            self.has_been_modified = False
+                self.has_been_modified = False
+            except json.JSONDecodeError:
+                raise InvalidFile("%s is not a valid JSON file" % os.path.basename(filename))
+            except Exception as e:
+                logger.error(f"Error loading file {filename}: {e}")
 
     def serialize(self):
         nodes, edges = [], []
@@ -103,10 +150,10 @@ class Scene(Serializable):
 
         # Create Node
         for node_data in data['nodes']:
-            Node(self).deserialize(node_data, hashmap)
+            Node(self).deserialize(node_data, hashmap, restore_id)
 
         # Create Edge
         for edge_data in data['edges']:
-            Edge(self).deserialize(edge_data, hashmap)
+            Edge(self).deserialize(edge_data, hashmap, restore_id)
 
         return True

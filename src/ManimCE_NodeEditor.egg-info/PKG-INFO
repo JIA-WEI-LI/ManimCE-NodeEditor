@@ -1,3 +1,20 @@
+Metadata-Version: 2.4
+Name: ManimCE-NodeEditor
+Version: 0.0.3.dev2
+Summary: A Node Editor for Manim Community Edition built with PyQt5.
+Author-email: Magicsoldier19 <magicsoldier19@gmail.com>
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: docutils==0.21.2
+Requires-Dist: furo>=2025.7.19
+Requires-Dist: pyqt5==5.15.11
+Requires-Dist: pyqt5-qt5==5.15.2
+Requires-Dist: sphinx>=8.2.3
+Requires-Dist: sphinx-autodoc-typehints>=3.2.0
+Requires-Dist: sphinx-inline-tabs>=2023.4.21
+Dynamic: license-file
+
 <!-- Language Switch -->
 <p align="right">
   🌐 <strong>Language：</strong>
@@ -7,7 +24,7 @@
 
 # ManimCE Node Editor — Visual Animation Creator
 
-[![Version](https://img.shields.io/badge/version-v0.3.0-orange)](#)
+[![Version](https://img.shields.io/badge/version-v0.2.0.dev9-orange)](#)
 [![Python](https://img.shields.io/badge/python-3.12+-blue.svg)](#)
 [![Qt](https://img.shields.io/badge/Qt-PyQt5-blue)](#)
 [![License](https://img.shields.io/github/license/JIA-WEI-LI/ManimCE-NodeEditor?color=blue)](./LICENSE)
@@ -31,9 +48,9 @@ A PyQt5-based visual node editor designed to **simplify the creation of ManimCE 
 | Milestone                                            | Progress |
 |-----------------------------------------------------|----------|
 | 1. Basic Node Editor Features                        | ✅ 100%     |
-| 2. Advanced Node Editor Features                     | ✅ 100%     |
-| 3. Node Editor Embedded Window Integration           | ✅ 100%     |
-| 4. Building advanced features of the node editor     | ❌ 0%       |
+| 2. Advanced Node Editor Features                     | ✅ 100%   |
+| 3. Node Editor Packaging                             | 🚀 30%       |
+| 4. Node Editor Embedded Window Integration           | ❌ 0%       |
 | 5. Completion of Node Editor                         | ❌ 0%       |
 | 6. Applying Multiple Styles for UI Design            | ❌ 0%       |
 | 7. Basic Integration with ManimCE Logic              | ❌ 0%       |
@@ -89,10 +106,9 @@ Official tutorial website is under development and will provide:
 ## 🔻 Roadmap & Tags
 *  `v0.0.1` ：  🎯 Basic node editing complete
 *  `v0.0.2` ：  🔁 Advanced logic, edge types, and serialization
-*  `v0.0.3` ：  📦 Complete the basic embedding interface
   
 ### 📦 Current Version
-**`v0.0.3`** – Under active development  
+**`v0.0.3.dev2`** – Under active development  
 
 ## 📄 License
 [MIT License](./LICENSE)

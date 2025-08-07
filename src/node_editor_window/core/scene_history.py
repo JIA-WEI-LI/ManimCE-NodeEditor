@@ -7,27 +7,47 @@ class SceneHistory():
     def __init__(self, scene):
         self.scene = scene
 
+        self.clear()
+        self.history_limit = 16
+
+        self._history_modified_listeners = []
+
+    def clear(self):
         self.history_stack = []
         self.history_current_step = -1
-        self.history_limit = 16
+
+    def storeInitialHistoryStamp(self):
+        self.storeHistory("Initial History Stamp")
+
+    def canUndo(self):
+        return self.history_current_step > 0
+
+    def canRedo(self):
+        return self.history_current_step + 1 < len(self.history_stack)
 
     def undo(self):
         logger.debug("UNDO")
 
-        if self.history_current_step > 0:
+        if self.canUndo():
             self.history_current_step -= 1
             self.restoreHistory()
+            self.scene.has_been_modified = True
 
     def redo(self):
         logger.debug("REDO")
 
-        if self.history_current_step + 1 < len(self.history_stack):
+        if self.canRedo():
             self.history_current_step += 1
             self.restoreHistory()
+            self.scene.has_been_modified = True
+
+    def addHistoryModifiedListener(self, callback):
+        self._history_modified_listeners.append(callback)
 
     def restoreHistory(self):
         logger.debug(f"Restoring history ... current step: {self.history_current_step} {len(self.history_stack)}")
         self.restoreHistoryStamp(self.history_stack[self.history_current_step])
+        for callback in self._history_modified_listeners: callback()
 
     def storeHistory(self, desc, setModified: bool = False):
         if setModified:
@@ -48,6 +68,9 @@ class SceneHistory():
         self.history_stack.append(hs)
         self.history_current_step += 1
         logger.debug(f"  -- setting step to: {self.history_current_step}")
+        
+        # always trigger history modified (for i.e. updateEditMenu)
+        for callback in self._history_modified_listeners: callback()
 
     def createHistoryStamp(self, desc):
         sel_obj = {
@@ -69,17 +92,18 @@ class SceneHistory():
     
     def restoreHistoryStamp(self, history_stamp):
         logger.debug(f"RHS: {history_stamp['desc']}")
+        try:
+            self.scene.deserialize(history_stamp['snapshot'])
 
-        self.scene.deserialize(history_stamp['snapshot'])
+            for edge_id in history_stamp['selection']['edges']:
+                for edge in self.scene.edges:
+                    if edge.id == edge_id:
+                        edge.graphicsEdge.setSelected(True)
+                        break
 
-        for node_id in history_stamp['selection']['nodes']:
-            for node in self.scene.nodes:
-                if node.id == node_id:
-                    node.graphicsNode.setSelected(True)
-                    break
-
-        for edge_id in history_stamp['selection']['edges']:
-            for edge in self.scene.edges:
-                if edge.id == edge_id:
-                    edge.graphicsEdge.setSelected(True)
-                    break
+            for node_id in history_stamp['selection']['nodes']:
+                for node in self.scene.nodes:
+                    if node.id == node_id:
+                        node.graphicsNode.setSelected(True)
+                        break
+        except Exception as e: logger.error(f"Error restoring history stamp: {e}")
